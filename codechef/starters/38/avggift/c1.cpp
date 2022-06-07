@@ -1,0 +1,104 @@
+// @author: ascyrax
+#include <bits/stdc++.h>
+using namespace std;
+typedef long long ll;
+typedef long double ld;
+#define endl "\n"
+#define ioss                   \
+  ios::sync_with_stdio(false); \
+  cin.tie(0);
+#define int long long
+#define pb push_back
+#define ppb pop_back
+#define pf push_front
+#define ppf pop_front
+
+double startTime;
+
+double gct() // get_current_time
+{
+  return ((double)clock() - startTime) / CLOCKS_PER_SEC;
+}
+
+void suraj();
+
+signed main()
+{
+
+  ioss
+
+      // startTime=(double)clock();
+
+      // freopen("shell.in","r",stdin);freopen("shell.out","w",stdout);
+
+      // cout << setprecision(15) << fixed;
+
+      int t = 1;
+
+  cin >> t;
+
+  for (int i = 1; i <= t; i++)
+  {
+
+    // cout<<"Case #"<<i<<": ";
+
+    suraj();
+  }
+
+  return 0;
+}
+
+int inf = 1e18;
+//.....................................
+
+//.....................................
+
+//.....................................
+
+//.....................................
+
+void suraj()
+{
+  int n, x;
+  cin >> n >> x;
+  vector<int> v(n);
+  for (int &i : v)
+    cin >> i;
+
+  sort(v.begin(), v.end());
+
+  auto it = lower_bound(v.begin(), v.end(), x);
+  if (it == v.end() || (it == v.begin() && (*it) != x))
+  {
+    cout << "NO" << endl;
+    return;
+  }
+  if ((*it) == x)
+  {
+    cout << "YES" << endl;
+  }
+  else
+  {
+    // int ptr = it - v.begin();
+    // int l = ptr - 1;
+    // int r = ptr;
+    // while (l >= 0 && r < n)
+    // {
+    //   if (v[l] + v[r] == 2 * x)
+    //   {
+    cout << "YES" << endl;
+    //     return;
+    //   }
+    //   else
+    //   {
+    //     int dl = x - v[l];
+    //     int dr = v[r] - x;
+    //     if (dl < dr)
+    //       l--;
+    //     else if (dl > dr)
+    //       r++;
+    //   }
+    // }
+    // cout << "NO" << endl;
+  }
+}
