@@ -1,0 +1,5 @@
+an array of length n is given. find the no of ways to choose exactly k elements such that the sum <= m.
+
+n <= 500
+m <= 500
+ai <= 500

@@ -1,0 +1,13 @@
+a grid of size n*m is given.
+
+player A and B are playing a game.
+
+A chooses a row and then the leftmost value(val) that has not been chosen yet, in that row and both players go val floors up.
+Initially both are at floor 0.
+B chooses a row and then the rightmost value(val) that has not been chosen yet, in that row and both players go val floors down.
+floor no. can be negative as well.
+
+n*m <=1e6.
+val <=1e3.
+
+find the final floor no. if both of them play optimally.

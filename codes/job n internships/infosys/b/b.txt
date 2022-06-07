@@ -1,0 +1,5 @@
+a string of length n is given. find the no of substrings which are special. 
+special strings contain a palindrome of length>=2
+
+
+len(s) i.e. n <=1e6
