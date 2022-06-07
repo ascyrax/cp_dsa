@@ -1,0 +1,1 @@
+cout << "gct: " << gct()
