@@ -25,15 +25,15 @@ void suraj();
 signed main()
 {
 
-  // ioss
+  ioss
 
-  // startTime=(double)clock();
+      // startTime=(double)clock();
 
-  // freopen("shell.in","r",stdin);freopen("shell.out","w",stdout);
+      // freopen("shell.in","r",stdin);freopen("shell.out","w",stdout);
 
-  // cout << setprecision(15) << fixed;
+      // cout << setprecision(15) << fixed;
 
-  int t = 1;
+      int t = 1;
 
   cin >> t;
 
@@ -47,7 +47,7 @@ signed main()
 
   return 0;
 }
-int inf = -1e9;
+pair<int, int> inf = make_pair(-1e9, -1);
 //.....................................
 void print(vector<int> v)
 {
@@ -58,25 +58,25 @@ void print(vector<int> v)
 }
 struct segmentTree
 {
-  vector<int> segTree;
+  vector<pair<int, int>> segTree;
   int len;
 
   // BUILDING THE SEG TREE IN O(N).
-  void build(vector<int> &v, int n)
+  void build(vector<pair<int, int>> &v, int n)
   {
     // cout << "n = " << n << endl;
     len = 1;
     while (len < n)
       len *= 2;
     // cout << "len = " << len << endl;
-    segTree = vector<int>(2 * len - 1, inf);
+    segTree = vector<pair<int, int>>(2 * len - 1, inf);
     // cout << "1st" << endl;
-    // print(segTree);
+    // prpair<int,int>(segTree);
     build(v, n, 0, 0, len - 1);
     // cout << "2nd" << endl;
-    // print(segTree);
+    // prpair<int,int>(segTree);
   }
-  int build(vector<int> &v, int lenv, int node, int lx, int rx)
+  pair<int, int> build(vector<pair<int, int>> &v, int lenv, int node, int lx, int rx)
   {
     if (lx == rx)
     {
@@ -94,36 +94,36 @@ struct segmentTree
   }
 
   // POINT UPDATES IN O(LOG N)
-  void update(int index, int val)
-  {
-    update(index, val, 0, 0, len - 1);
-  }
-  int update(int index, int val, int node, int lx, int rx)
-  {
-    if (lx == rx)
-    {
-      segTree[node] = val;
-      return segTree[node];
-    }
-    int mid = (lx + rx) / 2;
-    if (index <= mid)
-    {
-      update(index, val, node * 2 + 1, lx, (lx + rx) / 2);
-    }
-    else if (index > mid)
-    {
-      update(index, val, node * 2 + 2, (lx + rx) / 2 + 1, rx);
-    }
-    segTree[node] = max(segTree[node * 2 + 1], segTree[node * 2 + 2]);
-    return segTree[node];
-  }
+  // void update(int index, int val)
+  // {
+  //   update(index, val, 0, 0, len - 1);
+  // }
+  // int update(int index, int val, int node, int lx, int rx)
+  // {
+  //   if (lx == rx)
+  //   {
+  //     segTree[node] = val;
+  //     return segTree[node];
+  //   }
+  //   int mid = (lx + rx) / 2;
+  //   if (index <= mid)
+  //   {
+  //     update(index, val, node * 2 + 1, lx, (lx + rx) / 2);
+  //   }
+  //   else if (index > mid)
+  //   {
+  //     update(index, val, node * 2 + 2, (lx + rx) / 2 + 1, rx);
+  //   }
+  //   segTree[node] = max(segTree[node * 2 + 1], segTree[node * 2 + 2]);
+  //   return segTree[node];
+  // }
 
   // RANGE QUERIES IN O(LOG N)
-  int query(int l, int r)
+  pair<int, int> query(int l, int r)
   {
     return query(l, r, 0, 0, len - 1);
   }
-  int query(int l, int r, int node, int lx, int rx)
+  pair<int, int> query(int l, int r, int node, int lx, int rx)
   {
     if (lx == rx)
     {
@@ -161,6 +161,13 @@ void print(string s, vector<int> v)
   cout << s << endl;
   for (auto el : v)
     cout << el << " ";
+  cout << endl;
+}
+void print(string s, vector<pair<int, int>> v)
+{
+  cout << s << endl;
+  for (auto el : v)
+    cout << el.first << " ";
   cout << endl;
 }
 bool custom(box &a, box &b)
@@ -217,9 +224,9 @@ void suraj()
   sort(blue.begin(), blue.end(), custom);
   sort(red.begin(), red.end(), custom);
 
-  print("v", v);
-  print("blue", blue);
-  print("red", red);
+  // print("v", v);
+  // print("blue", blue);
+  // print("red", red);
 
   vector<int> vBlue, vRed;
   for (int i = 0; i < blue.size(); i++)
@@ -227,25 +234,25 @@ void suraj()
   for (int i = 0; i < red.size(); i++)
     vRed.pb(red[i].l);
 
-  print("vBlue", vBlue);
-  print("vRed", vRed);
+  // print("vBlue", vBlue);
+  // print("vRed", vRed);
 
   segmentTree stBlue, stRed;
-  vector<int> temp;
+  vector<pair<int, int>> temp;
   for (auto el : blue)
-    temp.pb(el.r);
+    temp.pb(make_pair(el.r, el.index));
   stBlue.build(temp, blue.size());
   // stBlue.build(temp, n);
 
   temp.clear();
 
   for (auto el : red)
-    temp.pb(el.r);
+    temp.pb(make_pair(el.r, el.index));
   stRed.build(temp, red.size());
   // stRed.build(temp, n);
 
-  print("stBlue", stBlue.segTree);
-  print("stRed", stRed.segTree);
+  // print("stBlue", stBlue.segTree);
+  // print("stRed", stRed.segTree);
 
   vector<int> parent(n, -1);
   for (int i = 0; i < n; i++)
@@ -254,37 +261,53 @@ void suraj()
   for (int i = 0; i < n; i++)
   {
     box b = v[i];
-    cout << "-------------------------" << endl;
-    cout << "i = " << i << endl;
-    cout << "current box = ";
-    print(b);
+    // cout << "-------------------------" << endl;
+    // cout << "i = " << i << endl;
+    // cout << "current box = ";
+    // print(b);
     // blue box
     if (b.col == 1)
     {
       // last red box which begins before the ending of this blue box
       int loc = upper_bound(vRed.begin(), vRed.end(), b.r) - vRed.begin();
-      cout << "loc = " << loc << endl;
+      // cout << "loc = " << loc << endl;
       // the red with the rightmost ending point, among all these red boxes
-      int rightmostRed = stRed.query(0, loc - 1);
-      cout << "rightmostRed = " << rightmostRed << endl;
+      if (loc > 0)
+      {
 
-      if (red[rightmostRed].r >= b.l)
-      { // if this blue and any(i.e. rightmostRed) intersect
-        parent[b.index] = parent[red[rightmostRed].index];
+        pair<int, int> rightmostRed = stRed.query(0, loc - 1);
+        // cout << "rightmostRed = " << rightmostRed.first << " " << rightmostRed.second << endl;
+
+        if (red[rightmostRed.second].r >= b.l)
+        { // if this blue and any(i.e. rightmostRed) intersect
+          parent[b.index] = parent[red[rightmostRed.second].index];
+        }
+      }
+      else if (loc == 0)
+      {
+        // nothing changes
       }
     }
     // red box
     else
     {
       int loc = upper_bound(vBlue.begin(), vBlue.end(), b.r) - vBlue.begin();
-      int rightmostBlue = stBlue.query(0, loc - 1);
-      if (blue[rightmostBlue].r >= b.l)
+      if (loc > 0)
       {
-        parent[b.index] = parent[blue[rightmostBlue].index];
+
+        pair<int, int> rightmostBlue = stBlue.query(0, loc - 1);
+        if (blue[rightmostBlue.second].r >= b.l)
+        {
+          parent[b.index] = parent[blue[rightmostBlue.second].index];
+        }
+      }
+      else
+      {
+        //
       }
     }
-    cout << "parent" << endl;
-    print(parent);
+    // cout << "parent" << endl;
+    // print(parent);
   }
 
   set<int> parentSet;
