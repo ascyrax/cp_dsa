@@ -35,7 +35,7 @@ signed main()
 
       int t = 1;
 
-  // cin >> t;
+  cin >> t;
 
   for (int i = 1; i <= t; i++)
   {
@@ -61,37 +61,42 @@ void suraj()
 {
   int n;
   cin >> n;
-  vector<int> v(n);
-  int minTime = -inf;
-  int sum = 0;
-  for (int i = 0; i < n; i++)
+  vector<int> v(2 * n);
+  int odd = 0, even = 0;
+  for (int &i : v)
   {
-    cin >> v[i];
-    sum += v[i];
-    int q = sum / (i + 1);
-    int r = sum % (i + 1);
-    if (r > 0)
-      minTime = max(minTime, (sum / (i + 1)) + 1);
+    cin >> i;
+    if (i & 1)
+      odd++;
     else
-      minTime = max(minTime, sum / (i + 1));
+      even++;
   }
-
-  int q;
-  cin >> q;
-  for (int i = 0; i < q; i++)
+  if (even < odd)
   {
-    int time;
-    cin >> time;
-    if (time < minTime)
-      cout << -1 << endl;
-    else
+    cout << (odd - even) / 2 << endl;
+  }
+  else
+  {
+    for (int i = 0; i < 2 * n; i++)
     {
-      int q = sum / time;
-      int r = sum % time;
-      if (r > 0)
-        cout << q + 1 << endl;
+      if (v[i] & 1)
+        v[i] = inf;
       else
-        cout << q << endl;
+      {
+        int cnt = 0;
+        while (v[i] % 2 == 0)
+        {
+          v[i] /= 2;
+          cnt++;
+        }
+        v[i] = cnt;
+      }
     }
+    sort(v.begin(), v.end());
+    int diff = (even - odd) / 2;
+    int sum = 0;
+    for (int i = 0; i < diff; i++)
+      sum += v[i];
+    cout << sum << endl;
   }
 }

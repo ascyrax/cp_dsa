@@ -35,7 +35,7 @@ signed main()
 
       int t = 1;
 
-  // cin >> t;
+  cin >> t;
 
   for (int i = 1; i <= t; i++)
   {
@@ -62,36 +62,38 @@ void suraj()
   int n;
   cin >> n;
   vector<int> v(n);
-  int minTime = -inf;
-  int sum = 0;
   for (int i = 0; i < n; i++)
   {
     cin >> v[i];
-    sum += v[i];
-    int q = sum / (i + 1);
-    int r = sum % (i + 1);
-    if (r > 0)
-      minTime = max(minTime, (sum / (i + 1)) + 1);
-    else
-      minTime = max(minTime, sum / (i + 1));
   }
-
-  int q;
-  cin >> q;
-  for (int i = 0; i < q; i++)
+  int session = 1; // 1=> friend's session
+  int minSkips = 0;
+  for (int i = 0; i < n; i++)
   {
-    int time;
-    cin >> time;
-    if (time < minTime)
-      cout << -1 << endl;
+    if (session)
+    {
+      // friends turn
+      minSkips += v[i];
+      if (i + 1 < n)
+        if (v[i + 1] == 0)
+        {
+          i++;
+        }
+        else
+        {
+          i = i;
+        }
+    }
     else
     {
-      int q = sum / time;
-      int r = sum % time;
-      if (r > 0)
-        cout << q + 1 << endl;
-      else
-        cout << q << endl;
+      // my turn
+      if (i + 1 < n)
+        if (v[i + 1] == 0)
+          ;
+        else
+          i++;
     }
+    session = (session + 1) % 2;
   }
+  cout << minSkips << endl;
 }

@@ -35,7 +35,7 @@ signed main()
 
       int t = 1;
 
-  // cin >> t;
+  cin >> t;
 
   for (int i = 1; i <= t; i++)
   {
@@ -59,39 +59,25 @@ int inf = 1e18;
 
 void suraj()
 {
-  int n;
-  cin >> n;
+  int n, k;
+  cin >> n >> k;
   vector<int> v(n);
-  int minTime = -inf;
-  int sum = 0;
-  for (int i = 0; i < n; i++)
+  for (int &i : v)
+    cin >> i;
+
+  int cnt = 0;
+  for (int i = 1; i <= n - 2; i++)
   {
-    cin >> v[i];
-    sum += v[i];
-    int q = sum / (i + 1);
-    int r = sum % (i + 1);
-    if (r > 0)
-      minTime = max(minTime, (sum / (i + 1)) + 1);
-    else
-      minTime = max(minTime, sum / (i + 1));
+    if (v[i] > v[i - 1] + v[i + 1])
+      cnt++;
   }
 
-  int q;
-  cin >> q;
-  for (int i = 0; i < q; i++)
+  if (k == 1)
   {
-    int time;
-    cin >> time;
-    if (time < minTime)
-      cout << -1 << endl;
-    else
-    {
-      int q = sum / time;
-      int r = sum % time;
-      if (r > 0)
-        cout << q + 1 << endl;
-      else
-        cout << q << endl;
-    }
+    cout << (n - 2 + 1) / 2 << endl;
+  }
+  else
+  {
+    cout << cnt << endl;
   }
 }

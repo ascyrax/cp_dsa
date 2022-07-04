@@ -35,7 +35,7 @@ signed main()
 
       int t = 1;
 
-  // cin >> t;
+  cin >> t;
 
   for (int i = 1; i <= t; i++)
   {
@@ -61,37 +61,38 @@ void suraj()
 {
   int n;
   cin >> n;
-  vector<int> v(n);
-  int minTime = -inf;
-  int sum = 0;
+  vector<int> ps(n, 0);
+  vector<bool> thief(n, true);
   for (int i = 0; i < n; i++)
   {
-    cin >> v[i];
-    sum += v[i];
-    int q = sum / (i + 1);
-    int r = sum % (i + 1);
-    if (r > 0)
-      minTime = max(minTime, (sum / (i + 1)) + 1);
-    else
-      minTime = max(minTime, sum / (i + 1));
+    int a, b;
+    cin >> a >> b;
+    a--, b--;
+    // if i is the thief then he wont tell the truth about himself.
+    if (a <= i && b >= i)
+      thief[i] = false;
+    ps[a]++;
+    if (b + 1 < n)
+      ps[b + 1]--;
+  }
+  for (int i = 1; i < n; i++)
+  {
+    ps[i] = ps[i - 1] + ps[i];
   }
 
-  int q;
-  cin >> q;
-  for (int i = 0; i < q; i++)
+  for (int i = 0; i < n; i++)
+    if (ps[i] == 0 || ps[i] == n)
+      thief[i] = false;
+
+  int cnt = 0;
+  for (auto el : thief)
+    if (el)
+      cnt++;
+  cout << cnt << endl;
+
+  for (int i = 0; i < n; i++)
   {
-    int time;
-    cin >> time;
-    if (time < minTime)
-      cout << -1 << endl;
-    else
-    {
-      int q = sum / time;
-      int r = sum % time;
-      if (r > 0)
-        cout << q + 1 << endl;
-      else
-        cout << q << endl;
-    }
+    if (thief[i])
+      cout << i + 1 << endl;
   }
 }

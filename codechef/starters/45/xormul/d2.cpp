@@ -35,7 +35,7 @@ signed main()
 
       int t = 1;
 
-  // cin >> t;
+  cin >> t;
 
   for (int i = 1; i <= t; i++)
   {
@@ -59,39 +59,53 @@ int inf = 1e18;
 
 void suraj()
 {
-  int n;
-  cin >> n;
-  vector<int> v(n);
-  int minTime = -inf;
-  int sum = 0;
-  for (int i = 0; i < n; i++)
-  {
-    cin >> v[i];
-    sum += v[i];
-    int q = sum / (i + 1);
-    int r = sum % (i + 1);
-    if (r > 0)
-      minTime = max(minTime, (sum / (i + 1)) + 1);
-    else
-      minTime = max(minTime, sum / (i + 1));
-  }
+  int n, a, b;
+  cin >> n >> a >> b;
+  int x = 0;
+  int i = (1 << (n - 1));
 
-  int q;
-  cin >> q;
-  for (int i = 0; i < q; i++)
+  char flag = 'a';
+  bool flagSet = false;
+
+  while (i > 0)
   {
-    int time;
-    cin >> time;
-    if (time < minTime)
-      cout << -1 << endl;
-    else
+    if ((a & i) == 0 && (b & i) == 0)
     {
-      int q = sum / time;
-      int r = sum % time;
-      if (r > 0)
-        cout << q + 1 << endl;
-      else
-        cout << q << endl;
+      x += i;
     }
+    else if ((a & i) > 0 && (b & i) > 0)
+    {
+      x += 0;
+    }
+    else if (!flagSet)
+    {
+      if ((a & i) > 0)
+      {
+        flagSet = true;
+        flag = 'a';
+      }
+      else if ((b & i) > 0)
+      {
+        flagSet = true;
+        flag = 'b';
+      }
+    }
+    else if (flagSet)
+    {
+      if (flag == 'a')
+      {
+        if ((a & i) > 0)
+        {
+          x += i;
+        }
+      }
+      else if (flag = 'b')
+      {
+        if ((b & i) > 0)
+          x += i;
+      }
+    }
+    i = i >> 1;
   }
+  cout << x << endl;
 }

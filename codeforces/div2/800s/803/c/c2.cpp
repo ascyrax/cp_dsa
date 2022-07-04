@@ -35,7 +35,7 @@ signed main()
 
       int t = 1;
 
-  // cin >> t;
+  cin >> t;
 
   for (int i = 1; i <= t; i++)
   {
@@ -62,36 +62,72 @@ void suraj()
   int n;
   cin >> n;
   vector<int> v(n);
-  int minTime = -inf;
+
+  int nPos = 0, nNeg = 0, nZer = 0;
+  vector<int> pos, neg;
+  map<int, int> m;
   int sum = 0;
-  for (int i = 0; i < n; i++)
+  for (int &i : v)
   {
-    cin >> v[i];
-    sum += v[i];
-    int q = sum / (i + 1);
-    int r = sum % (i + 1);
-    if (r > 0)
-      minTime = max(minTime, (sum / (i + 1)) + 1);
+    cin >> i;
+    m[i]++;
+    if (i > 0)
+    {
+      nPos++;
+      pos.pb(i);
+    }
+    else if (i < 0)
+    {
+      nNeg++;
+      neg.pb(i);
+    }
     else
-      minTime = max(minTime, sum / (i + 1));
+      nZer++;
+    sum += i;
   }
 
-  int q;
-  cin >> q;
-  for (int i = 0; i < q; i++)
+  sort(v.begin(), v.end());
+
+  vector<int> v2;
+  for (int &i : v)
   {
-    int time;
-    cin >> time;
-    if (time < minTime)
-      cout << -1 << endl;
+    if (i == 0)
+      continue;
     else
+      v2.pb(i);
+  }
+  if (nZer)
+  {
+    v2.pb(0);
+  }
+  sort(v2.begin(), v2.end());
+  int lenv2 = v2.size();
+
+  // cout << m[10] << " " << m[5] << " " << m[1] << endl;
+
+  if (nPos >= 3 || nNeg >= 3)
+  {
+    cout << "NO" << endl;
+    return;
+  }
+  else
+  {
+    for (int i = 0; i < lenv2; i++)
     {
-      int q = sum / time;
-      int r = sum % time;
-      if (r > 0)
-        cout << q + 1 << endl;
-      else
-        cout << q << endl;
+      for (int j = i + 1; j < lenv2; j++)
+      {
+        for (int k = j + 1; k < lenv2; k++)
+        {
+          int sum = v2[i] + v2[j] + v2[k];
+          // cout << "sum = " << sum << endl;
+          if (m[sum] == 0)
+          {
+            cout << "NO" << endl;
+            return;
+          }
+        }
+      }
     }
   }
+  cout << "YES" << endl;
 }
