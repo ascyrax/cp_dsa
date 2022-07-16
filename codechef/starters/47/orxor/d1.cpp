@@ -203,7 +203,7 @@ void suraj()
   else if (x < mxp2)
   {
     // cout << "else" << endl;
-    left = x;
+    // left = x;
     if (rem == 3)
     {
       ans.pb({2, mxp2, mxp2 + 1});
@@ -232,6 +232,7 @@ void suraj()
     }
   }
   left = x ^ right;
+  // what if this left>n-1. this will lead to an error.
   int prev = 1;
   for (int i = 2; i <= mxp2 - 1; i++)
   {
