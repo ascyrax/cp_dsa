@@ -83,22 +83,54 @@ int mod = 1e9 + 7;
 
 void suraj()
 {
-  int n, k;
-  cin >> n >> k;
-  int minR = inf;
-  int maxL = -inf;
-  for (int i = 0; i < n; i++)
+  string s;
+  cin >> s;
+  int lens = s.size();
+
+  int l = 0, r = 0, qm = 0;
+
+  int i = 0;
+  for (i = 0; i < lens; i++)
   {
-    int a;
-    cin >> a;
-    int l = a / k;
-    int r = a / 1;
-    cout << l << " " << r << endl;
-    minR = min(minR, r);
-    maxL = max(maxL, l);
+    // cout << "i: " << i << endl;
+    // cout << "s: " << s << endl;
+    // cout << "l: " << l << " , r: " << r << endl;
+    if (s[i] == '(')
+      l++;
+    else if (s[i] == ')')
+      r++;
+    else if (s[i] == '?')
+    {
+      if (l < lens / 2)
+      {
+        s[i] = '(';
+        l++;
+      }
+      else
+      {
+        s[i] = ')';
+        r++;
+      }
+    }
+    if (l == lens / 2)
+    {
+      // cout << "if: " << i << endl;
+      for (int j = i + 1; j < lens; j++)
+      {
+        if (s[j] == '?')
+        {
+          if (l - 1 >= r + 1)
+            cout << "NO" << endl;
+          else
+            cout << "YES" << endl;
+          // }
+          return;
+        }
+        else if (s[j] == ')')
+          r++;
+      }
+      cout << "YES" << endl;
+      return;
+    }
   }
-  cout << "maxL: " << maxL << endl;
-  cout << "minR: " << minR << endl;
-  int ans = max(maxL - minR, 0ll);
-  cout << ans << endl;
 }

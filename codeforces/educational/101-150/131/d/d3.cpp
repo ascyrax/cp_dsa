@@ -112,31 +112,35 @@ void suraj()
     leftSorted.pb(make_pair(make_pair(mnai, mxai), i));
   }
   sort(leftSorted.begin(), leftSorted.end());
-  print("leftSorted", leftSorted);
-
-  set<pair<pair<int, int>, int>> st; // el.second is the index.
-  int ptr = 0;
   vector<int> ans(n + 1, 0);
   for (int i = 1; i <= n; i++)
   {
-    // cout << "I: " << i << endl;
-    while (ptr < leftSorted.size() && leftSorted[ptr].first.first <= i)
-    {
-      st.insert(make_pair(make_pair(leftSorted[ptr].first.second, leftSorted[ptr].first.first), leftSorted[ptr].second));
-      ptr++;
-    }
-    while (!st.empty())
-    {
-      auto top = *(st.begin());
-      if (top.first.first < i)
-        st.erase(st.begin());
-      else
-        break;
-    }
-    // cout << top.first.first << " " << top.first.second << " " << top.second << endl;
-    ans[(*st.begin()).second] = i;
-    st.erase(st.begin());
+    ans[leftSorted[i - 1].second] = i;
   }
+  print("leftSorted", leftSorted);
+
+  // set<pair<pair<int, int>, int>> st; // el.second is the index.
+  // int ptr = 0;
+  // for (int i = 1; i <= n; i++)
+  // {
+  //   // cout << "I: " << i << endl;
+  //   while (ptr < leftSorted.size() && leftSorted[ptr].first.first <= i)
+  //   {
+  //     st.insert(make_pair(make_pair(leftSorted[ptr].first.second, leftSorted[ptr].first.first), leftSorted[ptr].second));
+  //     ptr++;
+  //   }
+  //   while (!st.empty())
+  //   {
+  //     auto top = *(st.begin());
+  //     if (top.first.first < i)
+  //       st.erase(st.begin());
+  //     else
+  //       break;
+  //   }
+  //   // cout << top.first.first << " " << top.first.second << " " << top.second << endl;
+  //   ans[(*st.begin()).second] = i;
+  //   st.erase(st.begin());
+  // }
   for (int i = 1; i <= n; i++)
     cout << ans[i] << " ";
   cout << endl;

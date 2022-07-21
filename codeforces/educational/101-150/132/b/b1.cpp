@@ -35,7 +35,7 @@ signed main()
 
       int t = 1;
 
-  cin >> t;
+  // cin >> t;
 
   for (int i = 1; i <= t; i++)
   {
@@ -83,22 +83,47 @@ int mod = 1e9 + 7;
 
 void suraj()
 {
-  int n, k;
-  cin >> n >> k;
-  int minR = inf;
-  int maxL = -inf;
+  int n, m;
+  cin >> n >> m;
+  vector<int> h(n);
+  vector<int> ls(n), rs(n);
+
   for (int i = 0; i < n; i++)
   {
-    int a;
-    cin >> a;
-    int l = a / k;
-    int r = a / 1;
-    cout << l << " " << r << endl;
-    minR = min(minR, r);
-    maxL = max(maxL, l);
+    cin >> h[i];
   }
-  cout << "maxL: " << maxL << endl;
-  cout << "minR: " << minR << endl;
-  int ans = max(maxL - minR, 0ll);
-  cout << ans << endl;
+
+  ls[0] = 0;
+  for (int i = 1; i < n; i++)
+  {
+    if (h[i] >= h[i - 1])
+      ls[i] = ls[i - 1];
+    else
+      ls[i] = ls[i - 1] + h[i - 1] - h[i];
+  }
+
+  rs[n - 1] = 0;
+  for (int i = n - 2; i >= 0; i--)
+  {
+    if (h[i] >= h[i + 1])
+      rs[i] = rs[i + 1];
+    else
+      rs[i] = rs[i + 1] + h[i + 1] - h[i];
+  }
+
+  for (int i = 0; i < m; i++)
+  {
+    int s, t;
+    cin >> s >> t;
+    s--;
+    t--;
+    if (s < t)
+    {
+      cout << ls[t] - ls[s] << endl;
+    }
+    else if (s > t)
+    {
+      cout << rs[t] - rs[s] << endl;
+    }
+  }
 }

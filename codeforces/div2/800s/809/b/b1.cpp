@@ -83,4 +83,34 @@ int mod = 1e9 + 7;
 
 void suraj()
 {
+  int n;
+  cin >> n;
+  vector<int> v(n);
+  vector<vector<int>> grid(n + 1, vector<int>());
+  for (int i = 0; i < n; i++)
+  {
+    cin >> v[i];
+    grid[v[i]].pb(i + 1);
+  }
+
+  for (int i = 1; i <= n; i++)
+  {
+    int ans = 0;
+    int prev = -1;
+    for (auto el : grid[i])
+    {
+      if (prev == -1)
+      {
+        prev = el;
+        ans = 1;
+      }
+      if ((el - prev) % 2 == 1)
+      {
+        ans++;
+        prev = el;
+      }
+    }
+    cout << ans << " ";
+  }
+  cout << endl;
 }

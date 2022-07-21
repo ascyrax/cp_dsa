@@ -83,22 +83,36 @@ int mod = 1e9 + 7;
 
 void suraj()
 {
-  int n, k;
-  cin >> n >> k;
-  int minR = inf;
-  int maxL = -inf;
-  for (int i = 0; i < n; i++)
+  int k1;
+  cin >> k1;
+  vector<int> v(3);
+  cin >> v[0] >> v[1] >> v[2];
+  k1--;
+  // if (v[0])
+  //   v[0]--;
+  // if (v[1])
+  //   v[1]--;
+  // if (v[2])
+  //   v[2]--;
+  // cout << k1 << " " << v[0] << " " << v[1] << " " << v[2] << endl;
+  if (v[k1] == 0)
   {
-    int a;
-    cin >> a;
-    int l = a / k;
-    int r = a / 1;
-    cout << l << " " << r << endl;
-    minR = min(minR, r);
-    maxL = max(maxL, l);
+    cout << "NO" << endl;
+    return;
   }
-  cout << "maxL: " << maxL << endl;
-  cout << "minR: " << minR << endl;
-  int ans = max(maxL - minR, 0ll);
-  cout << ans << endl;
+  else
+  {
+    k1 = v[k1];
+    k1--;
+  }
+  if (v[k1] == 0)
+  {
+    cout << "NO" << endl;
+    return;
+  }
+  else
+  {
+    k1 = v[k1];
+  }
+  cout << "YES" << endl;
 }

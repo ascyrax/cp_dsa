@@ -35,7 +35,7 @@ signed main()
 
       int t = 1;
 
-  cin >> t;
+  // cin >> t;
 
   for (int i = 1; i <= t; i++)
   {
@@ -78,27 +78,24 @@ int mod = 1e9 + 7;
 //.....................................
 
 //.....................................
-
+int n;
+int calc(int i)
+{
+  int q = i / 4;
+  return q * n * 4;
+}
 //.....................................
 
 void suraj()
 {
-  int n, k;
-  cin >> n >> k;
-  int minR = inf;
-  int maxL = -inf;
-  for (int i = 0; i < n; i++)
+  cin >> n;
+  for (int i = 0; i <= n - 1; i++)
   {
-    int a;
-    cin >> a;
-    int l = a / k;
-    int r = a / 1;
-    cout << l << " " << r << endl;
-    minR = min(minR, r);
-    maxL = max(maxL, l);
+    for (int j = 0; j <= n - 1; j++)
+    {
+      // cout << "i: " << i << " , j: " << j << " , calc(i): " << calc(i) << endl;
+      cout << i % 4 + calc(i) + j * 4 << " ";
+    }
+    cout << endl;
   }
-  cout << "maxL: " << maxL << endl;
-  cout << "minR: " << minR << endl;
-  int ans = max(maxL - minR, 0ll);
-  cout << ans << endl;
 }

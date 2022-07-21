@@ -1,3 +1,4 @@
+// dp
 // @author: ascyrax
 #include <bits/stdc++.h>
 using namespace std;
@@ -83,22 +84,13 @@ int mod = 1e9 + 7;
 
 void suraj()
 {
-  int n, k;
-  cin >> n >> k;
-  int minR = inf;
-  int maxL = -inf;
+  int n;
+  cin >> n;
+  vector<vector<int>> dp(n, vector<int>(n, 0));
+  vector<int> v(n);
   for (int i = 0; i < n; i++)
   {
-    int a;
-    cin >> a;
-    int l = a / k;
-    int r = a / 1;
-    cout << l << " " << r << endl;
-    minR = min(minR, r);
-    maxL = max(maxL, l);
+    cin >> v[i];
+    v[i]--;
   }
-  cout << "maxL: " << maxL << endl;
-  cout << "minR: " << minR << endl;
-  int ans = max(maxL - minR, 0ll);
-  cout << ans << endl;
 }
