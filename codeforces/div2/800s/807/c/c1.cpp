@@ -83,54 +83,24 @@ int mod = 1e9 + 7;
 
 void suraj()
 {
+  int n, c, q;
+  cin >> n >> c >> q;
+
   string s;
   cin >> s;
-  int lens = s.size();
+  int lens = n;
 
-  int l = 0, r = 0, qm = 0;
-
-  int i = 0;
-  for (i = 0; i < lens; i++)
+  for (int i = 0; i < c; i++)
   {
-    // cout << "i: " << i << endl;
-    // cout << "s: " << s << endl;
-    // cout << "l: " << l << " , r: " << r << endl;
-    if (s[i] == '(')
-      l++;
-    else if (s[i] == ')')
-      r++;
-    else if (s[i] == '?')
-    {
-      if (l < lens / 2)
-      {
-        s[i] = '(';
-        l++;
-      }
-      else
-      {
-        s[i] = ')';
-        r++;
-      }
-    }
-    if (l == lens / 2)
-    {
-      // cout << "if: " << i << endl;
-      for (int j = i + 1; j < lens; j++)
-      {
-        if (s[j] == '?')
-        {
-          if (l - 1 >= r + 1)
-            cout << "NO" << endl;
-          else
-            cout << "YES" << endl;
-          // }
-          return;
-        }
-        else if (s[j] == ')')
-          r++;
-      }
-      cout << "YES" << endl;
-      return;
-    }
+    int l, r;
+    cin >> l >> r;
+    string suffix = s.substr(l - 1, r - l + 1);
+    s += suffix;
+  }
+  for (int i = 0; i < q; i++)
+  {
+    int k;
+    cin >> k;
+    cout << s[k - 1] << endl;
   }
 }

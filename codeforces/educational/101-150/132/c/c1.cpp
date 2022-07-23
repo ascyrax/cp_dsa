@@ -86,47 +86,52 @@ void suraj()
   string s;
   cin >> s;
   int lens = s.size();
-  // cout << "lens: " << lens << endl;
   int l = 0, r = 0, qm = 0;
 
   int i = 0;
-  int templ = 0;
   bool flag = false;
   for (i = 0; i < lens; i++)
   {
-    // cout << "i: " << i << endl;
-    // cout << "s: " << s << endl;
-    // cout << "l: " << l << " , r: " << r << endl;
     if (s[i] == '(')
       l++;
     else if (s[i] == ')')
       r++;
     else if (s[i] == '?')
     {
-      if (l >= r + 1 || (i + 1 < lens && s[i + 1] == '('))
-        templ++;
-      if (l < lens / 2)
-      {
-        s[i] = '(';
-        l++;
-      }
+      s[i] = '(';
+      l++;
     }
     if (l == lens / 2)
     {
-      // cout << "if: " << i << endl;
       for (int j = i + 1; j < lens; j++)
       {
+        cout << "j: " << j << endl;
         if (s[j] == '?')
         {
-          if (l - 1 >= r + 1 && templ > 0)
-            cout << "NO" << endl;
-          else
+          l--;
+          r++;
+          cout << "l: " << l << " , r: " << r << endl;
+          if (l < r)
+          {
+            // this cant be => unique RBS only possible
             cout << "YES" << endl;
-          // }
+            return;
+          }
+          for (int k = i + 1; k <= j; k++)
+          {
+            if (s[i] == '(')
+              l++;
+            else if (s[i] == ')')
+              r++;
+            if (l < r)
+            {
+              cout << "YES" << endl;
+              return;
+            }
+          }
+          cout << "NO" << endl;
           return;
         }
-        else if (s[j] == ')')
-          r++;
       }
       cout << "YES" << endl;
       return;

@@ -85,20 +85,72 @@ void suraj()
 {
   int n, k;
   cin >> n >> k;
-  int minR = inf;
-  int maxL = -inf;
+  int mn = inf;
+  int mx = -inf;
+  vector<set<int>> grid(3001, set<int>());
   for (int i = 0; i < n; i++)
   {
     int a;
     cin >> a;
-    int l = a / k;
-    int r = a / 1;
-    cout << l << " " << r << endl;
-    minR = min(minR, r);
-    maxL = max(maxL, l);
+    for (int i = 1; i <= k; i++)
+    {
+      grid[a].insert(a / i);
+      if (a / i == 0)
+        break;
+    }
   }
-  cout << "maxL: " << maxL << endl;
-  cout << "minR: " << minR << endl;
-  int ans = max(maxL - minR, 0ll);
+  // cout << "grid" << endl;
+  // for (int i = 0; i <= 11; i++)
+  // {
+  //   for (auto el : grid[i])
+  //     cout << el << " ";
+  //   cout << endl;
+  // }
+  int ans = inf;
+  for (int i = 0; i <= 3000; i++)
+  {
+    // cout << "i: " << i << endl;
+    int mn = inf, mx = -inf;
+    for (int j = 1; j <= 3000; j++)
+    {
+      if (grid[j].size())
+      {
+        // cout << "j: " << j << endl;
+        // find the closes no to i
+        auto loc = grid[j].upper_bound(i);
+        if (loc == grid[j].end())
+        {
+          --loc;
+          mn = min(mn, *loc);
+          mx = max(mx, *loc);
+        }
+        else if (loc == grid[j].begin())
+        {
+          // cout << "elseif" << endl;
+          // --loc;
+          mn = min(mn, *loc);
+          mx = max(mx, *loc);
+        }
+        else
+        {
+          int r = *loc;
+          --loc;
+          int l = *loc;
+          if (r - i <= i - l)
+          {
+            mn = min(mn, r);
+            mx = max(mx, r);
+          }
+          else
+          {
+            mn = min(mn, l);
+            mx = max(mx, l);
+          }
+        }
+      }
+    }
+    // cout << "mn: " << mn << " , mx: " << mx << endl;
+    ans = min(ans, mx - mn);
+  }
   cout << ans << endl;
 }
