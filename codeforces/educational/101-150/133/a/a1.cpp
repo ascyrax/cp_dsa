@@ -85,56 +85,22 @@ void suraj()
 {
   int n;
   cin >> n;
-  string s, t;
-  cin >> s >> t;
-
-  vector<char> vs, vt;
-  vs.pb(s[0]);
-  vt.pb(t[0]);
-  char prev = s[0];
-  for (int i = 0; i < n; i++)
+  if (n % 3 == 0)
   {
-    if (s[i] != prev)
-    {
-      vs.pb(s[i]);
-      prev = s[i];
-    }
+    cout << n / 3 << endl;
   }
-  prev = t[0];
-  for (int i = 0; i < n; i++)
+  else if (n % 3 == 1)
   {
-    if (t[i] != prev)
+    int ans = (n - 4) / 3 + 2;
+    if (n == 1)
     {
-      vt.pb(t[i]);
-      prev = t[i];
+      cout << 2 << endl;
     }
+    else
+      cout << ans << endl;
   }
-  if (vs != vt)
+  else if (n % 3 == 2)
   {
-    cout << -1 << endl;
-    return;
+    cout << (n / 3 + 1) << endl;
   }
-  int ps = 1;
-  int ans = 0;
-  for (int i = 1; i <= n - 2; i++)
-  {
-    if (t[i] == s[ps])
-    {
-      ans--;
-    }
-    if (s[ps] != t[i])
-    {
-      // find first instance of t[i] in s, to the right of index i.
-      for (; ps <= n - 1; ps++)
-      {
-
-        if (s[ps] = t[i])
-          break;
-        s[ps] = t[i];
-      }
-      int diff = ps - i;
-      ans += 2 * diff;
-    }
-  }
-  cout << ans << endl;
 }

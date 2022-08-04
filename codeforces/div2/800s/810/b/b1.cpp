@@ -83,58 +83,57 @@ int mod = 1e9 + 7;
 
 void suraj()
 {
-  int n;
-  cin >> n;
-  string s, t;
-  cin >> s >> t;
+  int n, m;
+  cin >> n >> m;
+  vector<vector<int>> grid(n, vector<int>());
+  vector<int> a(n);
+  for (int i = 0; i < n; i++)
+    cin >> a[i];
 
-  vector<char> vs, vt;
-  vs.pb(s[0]);
-  vt.pb(t[0]);
-  char prev = s[0];
-  for (int i = 0; i < n; i++)
+  for (int i = 0; i < m; i++)
   {
-    if (s[i] != prev)
-    {
-      vs.pb(s[i]);
-      prev = s[i];
-    }
+    int x, y;
+    cin >> x >> y;
+    x--;
+    y--;
+    grid[x].pb(y);
+    grid[y].pb(x);
   }
-  prev = t[0];
-  for (int i = 0; i < n; i++)
+
+  if (m % 2 == 0)
   {
-    if (t[i] != prev)
-    {
-      vt.pb(t[i]);
-      prev = t[i];
-    }
+    cout << 0 << endl;
   }
-  if (vs != vt)
+  else
   {
-    cout << -1 << endl;
-    return;
-  }
-  int ps = 1;
-  int ans = 0;
-  for (int i = 1; i <= n - 2; i++)
-  {
-    if (t[i] == s[ps])
+    // remove a guy who has odd no of friendships
+    int ans = inf;
+    vector<int> even;
+    for (int i = 0; i < n; i++)
     {
-      ans--;
-    }
-    if (s[ps] != t[i])
-    {
-      // find first instance of t[i] in s, to the right of index i.
-      for (; ps <= n - 1; ps++)
+      if (grid[i].size() == 0)
+        continue;
+      // cout << "I: " << i << endl;
+      // cout << "grid[i].size(): " << grid[i].size() << endl;
+      if ((grid[i].size() % 2) == 1)
       {
-
-        if (s[ps] = t[i])
-          break;
-        s[ps] = t[i];
+        ans = min(ans, a[i]);
       }
-      int diff = ps - i;
-      ans += 2 * diff;
+      else if ((grid[i].size() % 2) == 0)
+      {
+        // say i remove i => grid[i] people will miss a friend .
+        int ansa = a[i];
+        int ansb = inf;
+        for (auto el : grid[i])
+        {
+          if ((grid[el].size()) % 2 == 0)
+          {
+            ansb = min(ansb, a[el]);
+          }
+        }
+        ans = min(ans, ansa + ansb);
+      }
     }
+    cout << ans << endl;
   }
-  cout << ans << endl;
 }

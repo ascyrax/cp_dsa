@@ -83,58 +83,35 @@ int mod = 1e9 + 7;
 
 void suraj()
 {
-  int n;
-  cin >> n;
-  string s, t;
-  cin >> s >> t;
-
-  vector<char> vs, vt;
-  vs.pb(s[0]);
-  vt.pb(t[0]);
-  char prev = s[0];
+  int n, x, y;
+  cin >> n >> x >> y;
+  vector<int> sadness(n);
+  int mx = 0;
   for (int i = 0; i < n; i++)
   {
-    if (s[i] != prev)
-    {
-      vs.pb(s[i]);
-      prev = s[i];
-    }
+    cin >> sadness[i];
+    mx = max(mx, sadness[i]);
   }
-  prev = t[0];
-  for (int i = 0; i < n; i++)
+  if (x > y)
   {
-    if (t[i] != prev)
+    int cnt = 0;
+    for (int i = n - 1; i >= 0; i--)
     {
-      vt.pb(t[i]);
-      prev = t[i];
+      int val = sadness[i] - cnt * y;
+      if (val <= 0)
+        continue;
+      int q = val / x;
+      if (val % x != 0)
+        q++;
+      cnt += q;
     }
+    cout << cnt << endl;
   }
-  if (vs != vt)
+  else
   {
-    cout << -1 << endl;
-    return;
+    if (mx % y == 0)
+      cout << mx / y << endl;
+    else
+      cout << (mx / y + 1) << endl;
   }
-  int ps = 1;
-  int ans = 0;
-  for (int i = 1; i <= n - 2; i++)
-  {
-    if (t[i] == s[ps])
-    {
-      ans--;
-    }
-    if (s[ps] != t[i])
-    {
-      // find first instance of t[i] in s, to the right of index i.
-      for (; ps <= n - 1; ps++)
-      {
-
-        if (s[ps] = t[i])
-          break;
-        s[ps] = t[i];
-      }
-      int diff = ps - i;
-      ans += 2 * diff;
-    }
-  }
-  cout << ans << endl;
 }

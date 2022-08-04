@@ -81,60 +81,42 @@ int mod = 1e9 + 7;
 
 //.....................................
 
+// int dp[10001][3];
 void suraj()
 {
   int n;
   cin >> n;
-  string s, t;
-  cin >> s >> t;
+  vector<int> v(n);
+  for (int i = 0; i < n; i++)
+  {
+    cin >> v[i];
+  }
+  vector<vector<int>> dp(n, vector<int>(3, inf));
+  int del[3] = {-1, 0, 1};
 
-  vector<char> vs, vt;
-  vs.pb(s[0]);
-  vt.pb(t[0]);
-  char prev = s[0];
-  for (int i = 0; i < n; i++)
+  dp[0][0] = (int)pow(2, abs(1 - 0));
+  dp[0][1] = (int)pow(2, abs(1 - 1));
+  dp[0][2] = (int)pow(2, abs(1 - 2));
+  for (int i = 1; i <= n - 1; i++)
   {
-    if (s[i] != prev)
+    for (int j = 0; j <= 2; j++)
     {
-      vs.pb(s[i]);
-      prev = s[i];
-    }
-  }
-  prev = t[0];
-  for (int i = 0; i < n; i++)
-  {
-    if (t[i] != prev)
-    {
-      vt.pb(t[i]);
-      prev = t[i];
-    }
-  }
-  if (vs != vt)
-  {
-    cout << -1 << endl;
-    return;
-  }
-  int ps = 1;
-  int ans = 0;
-  for (int i = 1; i <= n - 2; i++)
-  {
-    if (t[i] == s[ps])
-    {
-      ans--;
-    }
-    if (s[ps] != t[i])
-    {
-      // find first instance of t[i] in s, to the right of index i.
-      for (; ps <= n - 1; ps++)
+      // dp[i][j] = inf;
+      for (int k = 0; k <= 2; k++)
       {
-
-        if (s[ps] = t[i])
-          break;
-        s[ps] = t[i];
+        if (__gcd(v[i] + del[j], v[i - 1] + del[k]) == 1)
+        {
+          if (dp[i - 1][k] < inf)
+          {
+            dp[i][j] = min(dp[i][j], dp[i - 1][k] + (int)pow(2, abs(1 - j)));
+            dp[i][j] %= mod;
+          }
+        }
       }
-      int diff = ps - i;
-      ans += 2 * diff;
+      // if (dp[i][j] != inf)
     }
   }
+
+  int ans = min(dp[n - 1][0], min(dp[n - 1][1], dp[n - 1][2]));
   cout << ans << endl;
 }

@@ -85,56 +85,30 @@ void suraj()
 {
   int n;
   cin >> n;
-  string s, t;
-  cin >> s >> t;
+  vector<vector<int>> ans;
+  vector<int> perm;
+  for (int i = 1; i <= n; i++)
+    perm.pb(i);
 
-  vector<char> vs, vt;
-  vs.pb(s[0]);
-  vt.pb(t[0]);
-  char prev = s[0];
-  for (int i = 0; i < n; i++)
-  {
-    if (s[i] != prev)
-    {
-      vs.pb(s[i]);
-      prev = s[i];
-    }
-  }
-  prev = t[0];
-  for (int i = 0; i < n; i++)
-  {
-    if (t[i] != prev)
-    {
-      vt.pb(t[i]);
-      prev = t[i];
-    }
-  }
-  if (vs != vt)
-  {
-    cout << -1 << endl;
-    return;
-  }
-  int ps = 1;
-  int ans = 0;
-  for (int i = 1; i <= n - 2; i++)
-  {
-    if (t[i] == s[ps])
-    {
-      ans--;
-    }
-    if (s[ps] != t[i])
-    {
-      // find first instance of t[i] in s, to the right of index i.
-      for (; ps <= n - 1; ps++)
-      {
+  ans.pb(perm);
 
-        if (s[ps] = t[i])
-          break;
-        s[ps] = t[i];
-      }
-      int diff = ps - i;
-      ans += 2 * diff;
-    }
+  int temp = perm[n - 1];
+  perm[n - 1] = perm[n - 2];
+  perm[n - 2] = temp;
+  ans.pb(perm);
+  for (int i = n - 2; i >= 1; i--)
+  {
+    temp = perm[i];
+    perm[i] = perm[i - 1];
+    perm[i - 1] = temp;
+    ans.pb(perm);
   }
-  cout << ans << endl;
+
+  cout << ans.size() << endl;
+  for (auto p : ans)
+  {
+    for (auto el : p)
+      cout << el << " ";
+    cout << endl;
+  }
 }

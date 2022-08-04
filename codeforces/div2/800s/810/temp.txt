@@ -1,0 +1,91 @@
+void setup(){
+ size(600,600);
+ frameRate(1);
+ 
+ cellWidth = width / nRows;
+ cellHeight = height / nCols;
+
+ createGrid( nRows, nCols);
+}
+
+void draw(){
+  updateGrid1Step( nRows, nCols);
+  displayGrid( nRows, nCols);
+}
+
+int nRows=10,nCols=10;
+int cellWidth, cellHeight;
+Cell current;
+
+ArrayList<ArrayList<Cell>>grid = new ArrayList<ArrayList<Cell>>();
+
+void createGrid(int row,int col){
+  for(int i=0;i<row;i++){
+    ArrayList<Cell>arr = new ArrayList<Cell>();
+    for(int j=0;j<col;j++){
+      arr.add(new Cell( i, j, cellWidth, cellHeight));
+    }
+    grid.add(arr);
+  }
+  grid.get(current.row).get(current.col).visited=true;
+}
+
+ArrayList<Cell> stack = new ArrayList<Cell>();
+
+void updateGrid1Step( int nRows, int nCols){
+  int[] perm = getRandomPerm(0,3);
+  boolean neighFound=false;
+  for(int i=0;i<=3;i++){
+   int nextR = current.row + dx[perm[i]];
+   int nextC = current.col + dy[perm[i]];
+   println(nextR , nextC);
+   if(check(nextR,nextC)){
+     neighFound = true;
+     // break the wall between (row,col) & (x,y)
+     current.row=nextR;
+     current.col=nextC;
+     grid.get(current.row).get(current.col).visited=true;
+     grid.get(current.row).get(current.col).render();
+   }
+  }
+  //if(!neighFound)
+  //  if(stack.size()>0)
+  //    Cell curr = stack.remove(stack.size()-1);
+      
+  return;
+}
+
+int[] dx={1,0,-1,0};
+int[] dy={0,1,0,-1};
+
+
+
+boolean check(int x , int y){
+   if(x<0 || x>nCols-1 || y<0 || y>nRows-1) 
+     return false;
+   else if(grid.get(x).get(y).visited==true)
+     return false;
+   else
+    return true;
+}
+
+int[] getRandomPerm(int l, int r){
+ int[] ans = new int[r-l+1];
+ for(int i=l;i<=r;i++)ans[i-l]=i;
+ for(int i=0;i<=100;i++){
+  int a=parseInt(random(0,r-l+1));
+  int b=parseInt(random(0,r-l+1));
+  int temp=ans[a];
+  ans[a]=ans[b];
+  ans[b]=temp;
+ }
+ return ans;
+}
+
+void displayGrid(int row, int col){
+  for(int i=0;i<row;i++){
+    for(int j=0;j<col;j++){
+      grid.get(i).get(j).render();
+    }
+  }
+}

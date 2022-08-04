@@ -83,58 +83,46 @@ int mod = 1e9 + 7;
 
 void suraj()
 {
-  int n;
-  cin >> n;
-  string s, t;
-  cin >> s >> t;
+  int x, y;
+  cin >> x >> y;
 
-  vector<char> vs, vt;
-  vs.pb(s[0]);
-  vt.pb(t[0]);
-  char prev = s[0];
-  for (int i = 0; i < n; i++)
+  int sqrty = sqrt(y);
+  int ly, ry;
+  for (int i = sqrty; i >= 1; i--)
   {
-    if (s[i] != prev)
+    if (y % i == 0)
     {
-      vs.pb(s[i]);
-      prev = s[i];
+      ly = min(i, y / i);
+      ry = max(i, y / i);
+      break;
     }
   }
-  prev = t[0];
-  for (int i = 0; i < n; i++)
+
+  // cout << ly << " " << ry << endl;
+
+  int lx, rx;
+  // for rx==ly-1
+  for (int i = ly - 1; i >= 0; i--)
   {
-    if (t[i] != prev)
+    rx = i;
+    lx = x - rx;
+    if (lx >= 0 && lx <= rx)
     {
-      vt.pb(t[i]);
-      prev = t[i];
+      cout << lx << " " << rx << endl;
+      cout << ly << " " << ry << endl;
+      return;
     }
   }
-  if (vs != vt)
+
+  // for lx = ry+1
+  lx = ry + 1;
+  rx = x - lx;
+  if (rx >= lx)
   {
-    cout << -1 << endl;
+    cout << lx << " " << rx << endl;
+    cout << ly << " " << ry << endl;
     return;
   }
-  int ps = 1;
-  int ans = 0;
-  for (int i = 1; i <= n - 2; i++)
-  {
-    if (t[i] == s[ps])
-    {
-      ans--;
-    }
-    if (s[ps] != t[i])
-    {
-      // find first instance of t[i] in s, to the right of index i.
-      for (; ps <= n - 1; ps++)
-      {
 
-        if (s[ps] = t[i])
-          break;
-        s[ps] = t[i];
-      }
-      int diff = ps - i;
-      ans += 2 * diff;
-    }
-  }
-  cout << ans << endl;
+  cout << -1 << endl;
 }

@@ -35,7 +35,7 @@ signed main()
 
       int t = 1;
 
-  cin >> t;
+  // cin>>t;
 
   for (int i = 1; i <= t; i++)
   {
@@ -83,58 +83,10 @@ int mod = 1e9 + 7;
 
 void suraj()
 {
-  int n;
-  cin >> n;
-  string s, t;
-  cin >> s >> t;
-
-  vector<char> vs, vt;
-  vs.pb(s[0]);
-  vt.pb(t[0]);
-  char prev = s[0];
-  for (int i = 0; i < n; i++)
-  {
-    if (s[i] != prev)
-    {
-      vs.pb(s[i]);
-      prev = s[i];
-    }
-  }
-  prev = t[0];
-  for (int i = 0; i < n; i++)
-  {
-    if (t[i] != prev)
-    {
-      vt.pb(t[i]);
-      prev = t[i];
-    }
-  }
-  if (vs != vt)
-  {
-    cout << -1 << endl;
-    return;
-  }
-  int ps = 1;
-  int ans = 0;
-  for (int i = 1; i <= n - 2; i++)
-  {
-    if (t[i] == s[ps])
-    {
-      ans--;
-    }
-    if (s[ps] != t[i])
-    {
-      // find first instance of t[i] in s, to the right of index i.
-      for (; ps <= n - 1; ps++)
-      {
-
-        if (s[ps] = t[i])
-          break;
-        s[ps] = t[i];
-      }
-      int diff = ps - i;
-      ans += 2 * diff;
-    }
-  }
-  cout << ans << endl;
+  set<int> st;
+  st.insert(2);
+  st.insert(3);
+  st.insert(4);
+  st.insert(5);
+  st.insert(6);
 }
