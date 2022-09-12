@@ -48,33 +48,9 @@ signed main()
   return 0;
 }
 
+int inf = 1e18;
 //.....................................
 
-void print(string s, vector<int> v)
-{
-  cout << s << endl;
-  for (auto el : v)
-    cout << el << " ";
-  cout << endl;
-}
-void print(string s, set<int> st)
-{
-  cout << s << endl;
-  for (auto el : st)
-    cout << el << " ";
-  cout << endl;
-}
-void print(string s, vector<pair<int, int>> vp)
-{
-  cout << s << endl;
-  for (auto el : vp)
-  {
-    cout << el.first << " " << el.second << endl;
-  }
-}
-int inf = 1e18;
-int mod = 1e9 + 7;
-// int mod = 998244353;
 //.....................................
 
 //.....................................
@@ -83,11 +59,44 @@ int mod = 1e9 + 7;
 
 void suraj()
 {
-  int n,k,r,c;cin>>n>>k>>r>>c;
-  vector<vector<char>>grid (n, vector<char>(n,'.'));
+  string s;
+  cin >> s;
 
-  r--;c--;
-  grid[r][c] = 'X';
+  int n = s.size();
+  map<int, vector<int>> m;
+  for (int i = 0; i < n; i++)
+  {
+    m[s[i] - 'a'].pb(i);
+  }
 
-  
+  int first = s[0] - 'a';
+  int last = s[n - 1] - 'a';
+
+  int nSteps = 0;
+  vector<int> steps;
+  if (first <= last)
+    for (int i = first; i <= last; i++)
+    {
+      if (m.count(i) > 0)
+      {
+        nSteps += m[i].size();
+        for (auto el : m[i])
+          steps.pb(el);
+      }
+    }
+  else if (first > last)
+    for (int i = first; i >= last; i--)
+    {
+      if (m.count(i) > 0)
+      {
+        nSteps += m[i].size();
+        for (auto el : m[i])
+          steps.pb(el);
+      }
+    }
+
+  cout << abs(first - last) << " " << nSteps << endl;
+  for (auto el : steps)
+    cout << el + 1 << " ";
+  cout << endl;
 }
