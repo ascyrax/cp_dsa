@@ -26,56 +26,21 @@ vector<int> squares; // perfect squares => numbers with odd no of divisors
 signed main()
 {
 
-  ioss
-
-      // startTime=(double)clock();
-
-      // freopen("shell.in","r",stdin);freopen("shell.out","w",stdout);
-
-      // cout << setprecision(15) << fixed;
-      for (int i = 0; i * i <= 262143; i++) // 131071
-  {
+  for (int i = 0; i * i <= 262144; i++) // 131071
     squares.pb(i * i);
-  }
+
   int t = 1;
 
   cin >> t;
 
   for (int i = 1; i <= t; i++)
-  {
-
-    // cout<<"Case #"<<i<<": ";
-
     suraj();
-  }
 
   return 0;
 }
 
 //.....................................
 
-void print(string s, vector<int> v)
-{
-  cout << s << endl;
-  for (auto el : v)
-    cout << el << " ";
-  cout << endl;
-}
-void print(string s, set<int> st)
-{
-  cout << s << endl;
-  for (auto el : st)
-    cout << el << " ";
-  cout << endl;
-}
-void print(string s, vector<pair<int, int>> vp)
-{
-  cout << s << endl;
-  for (auto el : vp)
-  {
-    cout << el.first << " " << el.second << endl;
-  }
-}
 int inf = 1e18;
 int mod = 1e9 + 7;
 // int mod = 998244353;
@@ -93,36 +58,37 @@ void suraj()
   int n;
   cin >> n;
   vector<int> v(n);
+  int mx = 0;
   for (int i = 0; i < n; i++)
   {
     cin >> v[i];
+    mx = max(mx, v[i]);
   }
+  int mxXorSumPossible = 1;
+  while (mxXorSumPossible <= mx)
+    mxXorSumPossible *= 2;
+  // now any xorSum < mxXorSumPossible
+
   vector<int> pXor(n + 1, 0);
-  map<int, int> mpXor;
+  unordered_map<int, int> mpXor;
+  // vector<int> mpXor(263000, 0);
+  // vector<int> mpXor(2 * 262144, 0);
+  // xor ^ sth = 262144 max lets say, then sth can be = 2*262144
   mpXor[0]++;
   int ans = 0;
   for (int i = 1; i <= n; i++)
   {
     pXor[i] = pXor[i - 1] ^ v[i - 1];
-    // print("pxor[i]", pXor[i]);
     ans += i;
-    // cout << "ans a " << ans << endl;
     for (int j = 0; j < squares.size(); j++)
     {
       int square = squares[j];
+      if (square > mxXorSumPossible)
+        break;
       int pXorReq = square ^ pXor[i];
-      // if (pXorReq < 10)
-      //   cout << pXorReq << endl;
-      if (mpXor.count(pXorReq) > 0)
-      {
-        // cout << "pXorReq found " << pXorReq << endl;
-        ans -= mpXor[pXorReq];
-        // cout << "ans b " << ans << endl;
-      }
+      ans -= mpXor[pXorReq];
     }
     mpXor[pXor[i]]++;
-    // print("ans c ", ans);
-    // cout << "---" << endl;
   }
 
   cout << ans << endl;

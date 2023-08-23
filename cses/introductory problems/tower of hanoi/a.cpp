@@ -4,91 +4,155 @@
 
 using namespace std;
 
-typedef long long ll;
-typedef long double ld;
-
+#define fastio()                      \
+    ios_base::sync_with_stdio(false); \
+    cin.tie(NULL);                    \
+    cout.tie(NULL)
+#define MOD 1000000007
+#define MOD1 998244353
+#define INF 1e18
 #define endl "\n"
-#define ioss                         \
-        ios::sync_with_stdio(false); \
-        cin.tie(0);
+#define int long long
 #define pb push_back
+#define ppb pop_back
+#define mp make_pair
+#define PI 3.141592653589793238462
+#define set_bits __builtin_popcountll
+#define sz(x) ((int)(x).size())
+#define all(x) (x).begin(), (x).end()
 
-double startTime;
-double gct() // get_current_time
+typedef long long ll;
+typedef unsigned long long ull;
+typedef long double lld;
+
+#ifndef ONLINE_JUDGE
+#define debug(x)       \
+    cerr << #x << " "; \
+    _print(x);         \
+    cerr << endl;
+#else
+#define debug(x)
+#endif
+
+void _print(int t)
 {
-        return ((double)clock() - startTime) / CLOCKS_PER_SEC;
+    cerr << t;
+}
+void _print(string t) { cerr << t; }
+void _print(char t) { cerr << t; }
+void _print(lld t) { cerr << t; }
+void _print(double t) { cerr << t; }
+void _print(ull t) { cerr << t; }
+
+template <class T, class V>
+void _print(pair<T, V> p);
+template <class T>
+void _print(vector<T> v);
+template <class T>
+void _print(set<T> v);
+template <class T, class V>
+void _print(map<T, V> v);
+template <class T>
+void _print(multiset<T> v);
+template <class T, class V>
+void _print(pair<T, V> p)
+{
+    cerr << "{";
+    _print(p.first);
+    cerr << ",";
+    _print(p.second);
+    cerr << "}";
+}
+template <class T>
+void _print(vector<T> v)
+{
+    cerr << "[ ";
+    for (T i : v)
+    {
+        _print(i);
+        cerr << " ";
+    }
+    cerr << "]";
+}
+template <class T>
+void _print(set<T> v)
+{
+    cerr << "[ ";
+    for (T i : v)
+    {
+        _print(i);
+        cerr << " ";
+    }
+    cerr << "]";
+}
+template <class T>
+void _print(multiset<T> v)
+{
+    cerr << "[ ";
+    for (T i : v)
+    {
+        _print(i);
+        cerr << " ";
+    }
+    cerr << "]";
+}
+template <class T, class V>
+void _print(map<T, V> v)
+{
+    cerr << "[ ";
+    for (auto i : v)
+    {
+        _print(i);
+        cerr << " ";
+    }
+    cerr << "]";
 }
 
 void suraj();
 
-const ll mod = 998244353;
-const ll MOD = 1e9 + 7;
-const int INF = int(1e9);
-const int NEG_INF = int(-1e9);
-// const int INF = 2147483647;
-// const int NEG_INF = -2147483647 - 1;
-//............................... dont declare any variable named y1 or (y2 maybe) as it is already present in some library and they may collide
+signed main()
+{
 
-int main()
-{
-        // ioss
-        // startTime=(double)clock();
-        // freopen("shell.in","r",stdin);freopen("shell.out","w",stdout);
-        // cout << setprecision(15) << fixed;
-        // int t;cin>>t;for(int i=1;i<=t;i++)
-        {
-                // cout<<"Case #"<<i<<": ";
-                suraj();
-        }
-        return 0;
+    fastio();
+
+#ifndef ONLINE_JUDGE
+    clock_t startTime = clock();
+#endif
+
+    // freopen("shell.in","r",stdin);freopen("shell.out","w",stdout);
+
+    // cout << setprecision(15) << fixed;
+
+    int t = 1;
+
+    cin >> t;
+
+    for (int i = 1; i <= t; i++)
+    {
+
+        // cout<<"Case #"<<i<<": ";
+
+        suraj();
+
+        debug("---");
+    }
+
+#ifndef ONLINE_JUDGE
+    cerr << "Execution Time : " << double(clock() - startTime) / (double)CLOCKS_PER_SEC << " seconds." << endl;
+#endif
+
+    return 0;
 }
-int ans = 0;
-vector<pair<int, int>> v;
-//...............................
-void toh(int n, int src, int dest, int aux)
-{
-        if (n == 1)
-        {
-                ans++;
-                v.pb(make_pair(src, dest));
-                return;
-        }
-        toh(n - 1, src, aux, dest);
-        toh(1, src, dest, aux);
-        toh(n - 1, aux, dest, src);
-}
-//...............................
 
 void suraj()
 {
-        int n;
-        cin >> n;
+    int n;
+    cin >> n;
 
-        toh(n, 1, 3, 2); // move n disks from 1 -> 3 using 2
-        cout << ans << endl;
-        for (auto el : v)
-                cout << el.first << " " << el.second << endl;
+    int nMoves = solve(n, 0, 0);
 }
 
-//................................
-// int
-// int
-// int
-// int
-// 7
-// 1 3
-// 1 2
-// 3 2
-// 1 3
-// 2 1
-// 2 3
-// 1 3
-
-// 7
-// 1 2
-// 1 3
-// 2 3
-// 1 3
-// 1 2
-// 1 3
-// 2 3
+int solve(int a, int b, int c)
+{
+    return 1 + min(solve(a - 1, b + 1, c), solve(a - 1, b, c + 1));
+}
