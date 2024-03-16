@@ -147,10 +147,52 @@ signed main()
     return 0;
 }
 
+int nCr(int n, int r)
+{
+    // debug(n);
+    // debug(r);
+    const int mod = 1e9 + 7;
+    int res = 1;
+    r = min(r, n - r);
+    for (int i = 0; i < r; i++)
+    {
+        res *= (n - i);
+        res %= mod;
+    }
+    for (int i = 1; i <= r; i++)
+    {
+        res /= i;
+    }
+    // debug(res);
+    return res % mod;
+}
 void suraj()
 {
     int h, w, a, b;
     cin >> h >> w >> a >> b;
 
-    
+    // cnt the no of permutations of R (right) & D (down) satisfying the problem constraints
+
+    // no of Rs = w -1 ;
+    // no of Ds = h-1;
+
+    // in the first ((h-1-a) + (b)) elements of this permutation, there can only be (h-1-a) Ds and rest should be Rs.
+
+    // int ans = nCr(((h - 1 - a) + (b)), h - 1 - a) * nCr(h - 1 + w - 1 - ((h - 1 - a) + (b)), h - 1 - (h - 1 - a));
+    int ans = 0;
+    const int mod = 1e9 + 7;
+
+    for (int row = 1; row <= h - a; row++)
+    {
+        // b Rs in the first (row-1 + b)elements of the permutation
+        int first = nCr(row - 1 + b, b);
+        // debug(first);
+        // remaining permutation of elements
+        int second = nCr(h - 1 + w - 1 - (row - 1 + b), w - 1 - b);
+        // debug(second);
+        ans += (first * second % mod);
+        // debug(ans);
+    }
+
+    cout << ans << endl;
 }
