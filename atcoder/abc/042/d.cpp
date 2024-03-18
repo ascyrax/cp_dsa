@@ -112,6 +112,20 @@ void _print(map<T, V> v)
 }
 
 void suraj();
+void suraj2();
+
+int fact[200001];
+
+void preCalcFactorials()
+{
+    const int mod = 1e9 + 7;
+    fact[0] = 1;
+    for (int i = 1; i <= 200000; i++)
+    {
+        fact[i] = fact[i - 1] * i;
+        fact[i] %= mod;
+    }
+}
 
 signed main()
 {
@@ -125,6 +139,8 @@ signed main()
     // freopen("shell.in","r",stdin);freopen("shell.out","w",stdout);
 
     // cout << setprecision(15) << fixed;
+
+    preCalcFactorials();
 
     int t = 1;
 
@@ -147,22 +163,49 @@ signed main()
     return 0;
 }
 
+int calcPow(int base, int pow, int mod)
+{
+    int res = 1;
+    // visualize if pow = 13 ie 0b1101
+    // then we need to return "res" which is = base^1 * base^4 * base^8
+    int val = base;
+    while (pow)
+    {
+        if (pow & 1)
+        {
+            res *= val;
+            res %= mod;
+        }
+        val *= val;
+        val %= mod;
+        pow = pow >> 1;
+    }
+    return res;
+}
+int modInv(int a, int mod)
+{
+    // return the modular inverse of a % mod
+    // res = pow(a, mod - 2), if a % mod != 0, which will always be the case if a < mod :)
+
+    return calcPow(a, mod - 2, mod);
+}
+
 int nCr(int n, int r)
 {
     // debug(n);
     // debug(r);
+    // debug(n - r);
     const int mod = 1e9 + 7;
-    int res = 1;
-    r = min(r, n - r);
-    for (int i = 0; i < r; i++)
-    {
-        res *= (n - i);
-        res %= mod;
-    }
-    for (int i = 1; i <= r; i++)
-    {
-        res /= i;
-    }
+    int res = fact[n];
+    int factR = fact[r];
+    int factNMinusR = fact[n - r];
+    // debug(res);
+    // debug(factR);
+    // debug(factNMinusR);
+    res *= modInv(factR, mod);
+    res %= mod;
+    res *= modInv(factNMinusR, mod);
+    res %= mod;
     // debug(res);
     return res % mod;
 }
@@ -182,16 +225,58 @@ void suraj()
     int ans = 0;
     const int mod = 1e9 + 7;
 
-    for (int row = 1; row <= h - a; row++)
+    if (b == w - 1)
     {
-        // b Rs in the first (row-1 + b)elements of the permutation
+        int first = nCr(w - 1 + h - 1 - a, b);
+        int second = 1;
+        ans = first * second;
+        ans %= mod;
+        cout << ans << endl;
+        return;
+    }
+
+    for (int row = 1; row <= h - a - 1; row++)
+    {
+        // b Rs in the first (row-1 + b)elements of the permutation VIZ Iroha ends up in [row][b+1] position in the 1-indexed grid :)
         int first = nCr(row - 1 + b, b);
         // debug(first);
         // remaining permutation of elements
-        int second = nCr(h - 1 + w - 1 - (row - 1 + b), w - 1 - b);
+        int second = 1;
+        if (b == w - 1)
+            second = 1;
+        else
+            second = nCr((h - 1 + w - 1) - ((row - 1) + (b + 1)), ((w - 1) - (b + 1))); // assuming after the moves which led to 'first', we do a R, and then any permutation :)
         // debug(second);
-        ans += (first * second % mod);
+        ans += ((first * second));
+        ans %= mod;
         // debug(ans);
+    }
+    for (int row = h - a; row <= h - a; row++)
+    {
+        int first = nCr(row - 1 + b, b);
+        int second = nCr(h - 1 + w - 1 - (row - 1 + b), w - 1 - b); // assuming after the moves which led to 'first', we do a R, and then any permutation :)
+
+        ans += (first * second);
+        ans %= mod;
+    }
+
+    cout << ans << endl;
+}
+
+void suraj2()
+{
+    int h, w, a, b;
+    cin >> h >> w >> a >> b;
+
+    int ans = 0;
+    const int mod = 1e9 + 7;
+
+    for (int row = 1; row <= h - a; row++)
+    {
+        int first = nCr(row - 1 + b - 1, b - 1);
+        int second = nCr((h - 1 + w - 1) - ((row - 1) + (b)), ((w - 1) - (b))); // assuming after the moves which led to 'first', we do a R, and then any permutation :)
+        ans += ((first * second));
+        ans %= mod;
     }
 
     cout << ans << endl;
