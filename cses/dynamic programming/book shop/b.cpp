@@ -128,7 +128,7 @@ signed main()
 
     int t = 1;
 
-    cin >> t;
+    // cin>>t;
 
     for (int i = 1; i <= t; i++)
     {
@@ -149,52 +149,36 @@ signed main()
 
 void suraj()
 {
-    int n;
-    cin >> n;
-    vector<int> v(n);
-    for (int &i : v)
+    int n, maxPrice;
+    cin >> n >> maxPrice;
+
+    vector<int> prices(n), pages(n);
+    for (int &i : prices)
+        cin >> i;
+    for (int &i : pages)
         cin >> i;
 
-    // debug(v);
-
-    vector<vector<int>> mp(n, vector<int>(6, INF)); // mp = minimum penalty
-    // mp[0][0] = minimum penalty for s & t if first element goes to s
-    // mp[0][1] = minimum penalty for s & t if first element goes to t
-    // mp[0][2] = last element of s if 0th elmeent goes to s
-    // mp[0][3] = last element of t if 0th element goes to s
-    // mp[0][4] = last element of s if 0th elmeent goes to t
-    // mp[0][5] = last element of t if 0th element goes to t
-
-    mp[0][0] = 0;
-    mp[0][1] = 0;
-    mp[0][2] = v[0];
-    mp[0][3] = INF;
-    mp[0][4] = INF;
-    mp[0][5] = v[0];
-    for (int i = 1; i < n; i++)
+    // debug(prices);
+    // debug(pages);
+    // vector<int> dp(maxPrice + 1, 0); // dp[i] = most pages for price of i :)
+    // map<int, int> mp;
+    vector<int> dp(maxPrice + 1, 0);
+    // mp[0] = 0;
+    for (int i = 0; i < n; i++)
     {
-        // debug(i);
-        mp[i][2] = v[i];
-        // ith element goes to s
-        mp[i][0] = min(mp[i - 1][0] + (mp[i - 1][2] < v[i]), mp[i - 1][1] + (mp[i - 1][4] < v[i]));
-        if (mp[i - 1][0] + (mp[i - 1][2] < v[i]) < mp[i - 1][1] + (mp[i - 1][4] < v[i]))
-            mp[i][3] = mp[i - 1][3];
-        else if (mp[i - 1][0] + (mp[i - 1][2] < v[i]) < mp[i - 1][1] + (mp[i - 1][4] < v[i]))
-            mp[i][3] = mp[i - 1][5];
-        else // if both are equal
+        int price = prices[i];
+        int page = pages[i];
+        for (int j = maxPrice - price; j >= 1; j--)
         {
-            
+            if (dp[j] != 0)
+                dp[j + price] = max(dp[j + price], dp[j] + page);
         }
-
-        // ith element goes to t
-        mp[i][5] = v[i];
-        mp[i][1] = min(mp[i - 1][0] + (mp[i - 1][3] < v[i]), mp[i - 1][1] + (mp[i - 1][5] < v[i]));
-        if (mp[i - 1][0] + (mp[i - 1][3] < v[i]) < mp[i - 1][1] + (mp[i - 1][5] < v[i]))
-            mp[i][4] = mp[i - 1][2];
-        else
-            mp[i][4] = mp[i - 1][4];
+        dp[0 + price] = max(dp[0 + price], page);
+        // debug(dp);
     }
 
-    int ans = min(mp[n - 1][0], mp[n - 1][1]);
+    int ans = 0;
+    for (int i = 0; i <= maxPrice; i++)
+        ans = max(ans, dp[i]);
     cout << ans << endl;
 }

@@ -155,46 +155,90 @@ void suraj()
     for (int &i : v)
         cin >> i;
 
-    // debug(v);
+    vector<pair<int, int>> dp(n, pair<int, int>());
+    dp[0].first = 0; // min penalty till now, if cur el goes to 0 (is s).
+    dp[0].second = 0;
 
-    vector<vector<int>> mp(n, vector<int>(6, INF)); // mp = minimum penalty
-    // mp[0][0] = minimum penalty for s & t if first element goes to s
-    // mp[0][1] = minimum penalty for s & t if first element goes to t
-    // mp[0][2] = last element of s if 0th elmeent goes to s
-    // mp[0][3] = last element of t if 0th element goes to s
-    // mp[0][4] = last element of s if 0th elmeent goes to t
-    // mp[0][5] = last element of t if 0th element goes to t
+    vector<pair<int, int>> lastElIfCurGoesTo0(n, pair<int, int>());
+    lastElIfCurGoesTo0[0] = make_pair(v[0], INF);
+    vector<pair<int, int>> lastElIfCurGoesTo1(n, pair<int, int>());
+    lastElIfCurGoesTo1[0] = make_pair(INF, v[0]);
 
-    mp[0][0] = 0;
-    mp[0][1] = 0;
-    mp[0][2] = v[0];
-    mp[0][3] = INF;
-    mp[0][4] = INF;
-    mp[0][5] = v[0];
+    // debug(dp);
+    // debug(lastElIfCurGoesTo0);
+    // debug(lastElIfCurGoesTo1);
     for (int i = 1; i < n; i++)
     {
-        // debug(i);
-        mp[i][2] = v[i];
-        // ith element goes to s
-        mp[i][0] = min(mp[i - 1][0] + (mp[i - 1][2] < v[i]), mp[i - 1][1] + (mp[i - 1][4] < v[i]));
-        if (mp[i - 1][0] + (mp[i - 1][2] < v[i]) < mp[i - 1][1] + (mp[i - 1][4] < v[i]))
-            mp[i][3] = mp[i - 1][3];
-        else if (mp[i - 1][0] + (mp[i - 1][2] < v[i]) < mp[i - 1][1] + (mp[i - 1][4] < v[i]))
-            mp[i][3] = mp[i - 1][5];
-        else // if both are equal
+        int el = v[i];
+        int minPenIfprevGoesTo0 = dp[i - 1].first;
+        int minPenIfprevGoesTo1 = dp[i - 1].second;
+
+        // if el goes to 0
+        int val1 = dp[i - 1].first + (lastElIfCurGoesTo0[i - 1].first < v[i]);
+        int val2 = dp[i - 1].second + (lastElIfCurGoesTo1[i - 1].first < v[i]);
+        // debug(val1);
+        // debug(val2);
+        if (val1 == val2)
         {
-            
+            int a = lastElIfCurGoesTo0[i - 1].first;
+            int b = lastElIfCurGoesTo0[i - 1].second;
+            int c = lastElIfCurGoesTo1[i - 1].first;
+            int d = lastElIfCurGoesTo1[i - 1].second;
+
+            if (b > d)
+                val2++;
+            else
+                val1++;
         }
 
-        // ith element goes to t
-        mp[i][5] = v[i];
-        mp[i][1] = min(mp[i - 1][0] + (mp[i - 1][3] < v[i]), mp[i - 1][1] + (mp[i - 1][5] < v[i]));
-        if (mp[i - 1][0] + (mp[i - 1][3] < v[i]) < mp[i - 1][1] + (mp[i - 1][5] < v[i]))
-            mp[i][4] = mp[i - 1][2];
-        else
-            mp[i][4] = mp[i - 1][4];
+        if (val1 < val2)
+        {
+            dp[i].first = val1;
+            lastElIfCurGoesTo0[i].first = el;
+            lastElIfCurGoesTo0[i].second = lastElIfCurGoesTo0[i - 1].second;
+        }
+        else if (val2 < val1)
+        {
+            dp[i].first = val2;
+            lastElIfCurGoesTo0[i].first = el;
+            lastElIfCurGoesTo0[i].second = lastElIfCurGoesTo1[i - 1].second;
+        }
+
+        // if el goes to 1
+        val1 = dp[i - 1].first + (lastElIfCurGoesTo0[i - 1].second < el);
+        val2 = dp[i - 1].second + (lastElIfCurGoesTo1[i - 1].second < el);
+        // debug(val1);
+        // debug(val2);
+
+        if (val1 == val2)
+        {
+            int a = lastElIfCurGoesTo0[i - 1].first;
+            int b = lastElIfCurGoesTo0[i - 1].second;
+            int c = lastElIfCurGoesTo1[i - 1].first;
+            int d = lastElIfCurGoesTo1[i - 1].second;
+
+            if (a > c)
+                val2++;
+            else
+                val1++;
+        }
+
+        if (val1 < val2)
+        {
+            dp[i].second = val1;
+            lastElIfCurGoesTo1[i].second = el;
+            lastElIfCurGoesTo1[i].first = lastElIfCurGoesTo0[i - 1].first;
+        }
+        else if (val2 < val1)
+        {
+            dp[i].second = val2;
+            lastElIfCurGoesTo1[i].second = el;
+            lastElIfCurGoesTo1[i].first = lastElIfCurGoesTo1[i - 1].first;
+        }
+        // debug(dp);
+        // debug(lastElIfCurGoesTo0);
+        // debug(lastElIfCurGoesTo1);
     }
 
-    int ans = min(mp[n - 1][0], mp[n - 1][1]);
-    cout << ans << endl;
+    cout << min(dp[n - 1].first, dp[n - 1].second) << endl;
 }

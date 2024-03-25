@@ -147,54 +147,50 @@ signed main()
     return 0;
 }
 
+bool isValidK(int k, vector<pair<int, int>> &vp)
+{
+    int lenvp = vp.size();
+    int mn = 0, mx = 0;
+    for (int i = 0; i < lenvp; i++)
+    {
+        int left = vp[i].first;
+        int right = vp[i].second;
+
+        mn = max(0ll, mn - k);
+        mx = mx + k;
+
+        mn = max(mn, left);
+        mx = min(mx, right);
+
+        if (mn > mx)
+            return false;
+    }
+    return true;
+}
+
 void suraj()
 {
     int n;
     cin >> n;
-    vector<int> v(n);
-    for (int &i : v)
-        cin >> i;
-
-    // debug(v);
-
-    vector<vector<int>> mp(n, vector<int>(6, INF)); // mp = minimum penalty
-    // mp[0][0] = minimum penalty for s & t if first element goes to s
-    // mp[0][1] = minimum penalty for s & t if first element goes to t
-    // mp[0][2] = last element of s if 0th elmeent goes to s
-    // mp[0][3] = last element of t if 0th element goes to s
-    // mp[0][4] = last element of s if 0th elmeent goes to t
-    // mp[0][5] = last element of t if 0th element goes to t
-
-    mp[0][0] = 0;
-    mp[0][1] = 0;
-    mp[0][2] = v[0];
-    mp[0][3] = INF;
-    mp[0][4] = INF;
-    mp[0][5] = v[0];
-    for (int i = 1; i < n; i++)
+    vector<pair<int, int>> vp(n);
+    for (pair<int, int> &i : vp)
     {
-        // debug(i);
-        mp[i][2] = v[i];
-        // ith element goes to s
-        mp[i][0] = min(mp[i - 1][0] + (mp[i - 1][2] < v[i]), mp[i - 1][1] + (mp[i - 1][4] < v[i]));
-        if (mp[i - 1][0] + (mp[i - 1][2] < v[i]) < mp[i - 1][1] + (mp[i - 1][4] < v[i]))
-            mp[i][3] = mp[i - 1][3];
-        else if (mp[i - 1][0] + (mp[i - 1][2] < v[i]) < mp[i - 1][1] + (mp[i - 1][4] < v[i]))
-            mp[i][3] = mp[i - 1][5];
-        else // if both are equal
-        {
-            
-        }
-
-        // ith element goes to t
-        mp[i][5] = v[i];
-        mp[i][1] = min(mp[i - 1][0] + (mp[i - 1][3] < v[i]), mp[i - 1][1] + (mp[i - 1][5] < v[i]));
-        if (mp[i - 1][0] + (mp[i - 1][3] < v[i]) < mp[i - 1][1] + (mp[i - 1][5] < v[i]))
-            mp[i][4] = mp[i - 1][2];
-        else
-            mp[i][4] = mp[i - 1][4];
+        cin >> i.first >> i.second;
     }
+    // debug(vp);
 
-    int ans = min(mp[n - 1][0], mp[n - 1][1]);
-    cout << ans << endl;
+    int lo = 0, hi = 1e9;
+    while (lo < hi)
+    {
+        int mid = lo + (hi - lo) / 2;
+        if (isValidK(mid, vp))
+        {
+            hi = mid;
+        }
+        else
+        {
+            lo = mid + 1;
+        }
+    }
+    cout << lo << endl;
 }
