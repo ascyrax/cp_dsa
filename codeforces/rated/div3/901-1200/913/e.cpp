@@ -1,9 +1,4 @@
-//
-//  main.cpp
-//  d
-//
-//  Created by Suraj Singh Raman on 14/04/24.
-//
+// @author: ascyrax
 
 #include <iostream>
 #include <vector>
@@ -133,7 +128,7 @@ signed main()
 
     int t = 1;
 
-    // cin>>t;
+    cin >> t;
 
     for (int i = 1; i <= t; i++)
     {
@@ -152,11 +147,47 @@ signed main()
     return 0;
 }
 
+int digSum(int n)
+{
+    int digSum = 0;
+    while (n)
+    {
+        digSum += n % 10;
+        n /= 10;
+    }
+    return digSum;
+}
+
 void suraj()
 {
-    int a = 0;
-    for(int i=0;i<1e8;i++){
-        a += i;
+
+    int n;
+    cin >> n;
+
+    map<int, int> mp;
+
+    for (int i = 0; i <= n; i++)
+    {
+        mp[i + digSum(i)]++;
     }
-    cout<<a<<endl;
+
+    vector<pair<int, int> > culprits;
+    for (auto el : mp)
+    {
+        if (el.second > 1)
+        {
+            // cout << "CULPRIT FOUND" << endl;
+            culprits.push_back(el);
+            // cout << el.first << " " << el.second << endl;
+            // return;
+        }
+        // debug(el);
+    }
+
+    cout << "CULPRIT FOUND" << endl;
+    for (auto el : culprits)
+    {
+        // cout<<el.first<<" "<<el.second<<endl;
+        debug(el);
+    }
 }
