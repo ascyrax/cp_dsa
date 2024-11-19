@@ -122,7 +122,9 @@ signed main()
     clock_t startTime = clock();
 #endif
 
-    // freopen("shell.in","r",stdin);freopen("shell.out","w",stdout);
+    freopen("shell.in", "r", stdin);
+    freopen("shell.out", "w", stdout);
+    freopen("shell.out", "w", stderr);
 
     // cout << setprecision(15) << fixed;
 
@@ -156,9 +158,11 @@ vector<pair<int, int>> parent[4];
 
 void solve(int index)
 {
-    // debug(index);
+    // if (index > 30000)
+    debug(index);
     // debug(parent);
     int valQ = queen[index], valK = king[index], valJ = jack[index];
+    // cout << "valQ: " << valQ << endl;
     // debug(valQ);
     // debug(valK);
     // debug(valJ);
@@ -169,6 +173,7 @@ void solve(int index)
         if (found > 0)
             return;
         int nextElIndex = helperQ[i];
+        // debug(nextElIndex);
         if (nextElIndex > index)
         {
             if (!visited[nextElIndex])
@@ -261,6 +266,8 @@ void suraj()
         cin >> jack[i];
     }
 
+    // debug("inputs taken :)");
+
     for (int i = 1; i <= n; i++)
     {
         int valQ = queen[i];
@@ -284,11 +291,14 @@ void suraj()
     parent[2][1] = make_pair(0, 0);
     parent[3][1] = make_pair(0, 0);
 
+    // debug("solve begin");
     visited[1] = 1;
     solve(1);
-    debug(parent[1]);
-    debug(parent[2]);
-    debug(parent[3]);
+    // debug(parent[1]);
+    // debug(parent[2]);
+    // debug(parent[3]);
+
+    // debug("solved");
 
     if (found > 0)
     {
@@ -341,3 +351,12 @@ void suraj()
     else
         cout << "NO" << endl;
 }
+
+
+// dfs wont work because for testcases like 32, stack overflow will occur
+// hence we gotta use the iterative approach
+
+// test case 32
+// 1
+// 200000
+// 199999 199998 .... 3 2 1 200000

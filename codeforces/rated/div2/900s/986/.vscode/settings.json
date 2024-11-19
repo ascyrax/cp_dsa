@@ -1,6 +1,10 @@
 {
     "files.associations": {
         "*.embeddedhtml": "html",
-        "vector": "cpp"
+        "vector": "cpp",
+        "iostream": "cpp",
+        "xiosbase": "cpp",
+        "cmath": "cpp",
+        "utility": "cpp"
     }
 }
