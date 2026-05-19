@@ -146,127 +146,76 @@ signed main()
 
     return 0;
 }
-vector<int> ps, a, b;
-pair<int, int> findEndIndex(int i, int volume)
-{
-    // if (volume < b[i])
-    //     return make_pair(-1, volume);
-    debug(mp(i, volume));
-    int base = 0;
-    if (i > 0)
-        base = ps[i - 1];
-    int low = i, high = ps.size() - 1;
-    int ans = ps.size();
-    int mid = 0;
-    debug(base);
-    while (low < high)
-    {
-        mid = low + (high - low) / 2;
-        debug(low);
-        debug(mid);
-        debug(high);
-        debug(ps[mid] - base);
-        if (ps[mid] - base < volume)
-        {
-            debug("if");
-            low = mid + 1;
-        }
-        else if (ps[mid] - base > volume)
-        {
-            debug("else if");
-            high = mid;
-        }
-        else if (ps[mid] - base == volume)
-        {
-            debug("else");
-            break;
-        }
-    }
-    mid = low + (high - low) / 2;
-    int rem = 0;
-    if (ps[mid] - base == volume)
-        ans = mid;
-    else if (ps[mid] - base > volume)
-    {
-        ans = max(0ll, mid - 1);
-        rem = volume - (ps[ans] - base);
-    }
-    else if (ps[mid] - base < volume)
-    {
-        ans = mid;
-        rem = volume - (ps[ans] - base);
-    }
-    // if (rem < 0)
-    // {
-    //     rem = 0;
 
-    // }
-    debug(ans);
-    debug(rem);
-    return make_pair(ans, rem);
-}
-// 1
-// 3
-// 10 20 15
-// 9 8 6
 void suraj()
 {
-    int n;
-    cin >> n;
-    a = vector<int>(n);
-    for (int i = 0; i < n; i++)
-        cin >> a[i];
-    b = vector<int>(n);
-    for (int i = 0; i < n; i++)
-        cin >> b[i];
+    int n, k;
+    cin >> n >> k;
+    string s;
+    cin >> s;
 
-    ps = vector<int>(n);
-    ps[0] = b[0];
-    for (int i = 1; i < n; i++)
-        ps[i] = ps[i - 1] + b[i];
+    // the character at index k+i must be equal to index i
 
-    vector<int> cnt(n);
-    vector<int> rem(n);
+    // check if this is not true, then the answer is NO
+    // for (int i = k; i < n; i++)
+    // {
+    //     if (s[i] == '?')
+    //     {
+    //         s[i] = s[i - k]; // no matter s[i-k] is ? or 0 or 1
+    //     }
+    //     else if (s[i] != '?')
+    //     {
+    //         s[i] = s[i - k];
+    //     }
+    // }
+    debug(s);
 
-    debug(ps);
-
-    for (int i = 0; i < n; i++)
+    for (int i = 0; i < k; i++)
     {
-        int volume = a[i];
-        if(a[i] <= b[i])
+        // int flagValue = -1; // -1 means not set, 0 means 0, 1 means 1
+        set<int> flagValue;
+        for (int j = i; j < n; j += k)
         {
-            rem[i] += volume;
-            continue;
+            if (s[j] == '0')
+                flagValue.insert(0);
+            else if (s[j] == '1')
+                flagValue.insert(1);
         }
-        auto result = findEndIndex(i, volume);
-        debug(result);
-        // if(result.first == -1){
-        //     rem[i] += volume;
-        //     continue;
-        // }
-        cnt[i]++;
-        int endIndex = result.first;
-        int remVolume = result.second;
-        if (endIndex + 1 < n)
-            cnt[endIndex + 1]--;
-        if (endIndex + 1 < n)
-            rem[endIndex + 1] += remVolume;
-
-        debug(cnt);
-        debug(rem);
+        if (flagValue.size() > 1)
+        {
+            cout << "NO" << endl;
+            return;
+        }
+        else if (flagValue.size() == 1)
+        {
+            for (int j = i; j < n; j += k)
+            {
+                // cout << "*flagValue.begin(): " << *flagValue.begin() << endl;
+                s[j] = *flagValue.begin() + '0';
+            }
+        }
+        else if (flagValue.size() == 0)
+        {
+            // do nothing, we can set it to either 0 or 1
+        }
     }
+    // debug(s);
 
-    int carry = 0;
-    for (int i = 0; i < n; i++)
+    int cnt0 = 0, cnt1 = 0, cntqm = 0;
+    for (int i = 0; i < k; i++)
     {
-        carry += cnt[i];
-        cnt[i] = carry;
+        if (s[i] == '0')
+            cnt0++;
+        else if (s[i] == '1')
+            cnt1++;
+        else
+            cntqm++;
+    }
+    if (cnt0 > k / 2 || cnt1 > k / 2)
+    {
+        cout << "NO" << endl;
+        return;
     }
 
-    debug(cnt);
-    debug(rem);
-
-    for (int i = 0; i < n; i++)
-        cout << b[i] * cnt[i] + rem[i] << " ";
-    cout << endl;
+    cout << "YES" << endl;
 }

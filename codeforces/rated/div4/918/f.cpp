@@ -40,7 +40,10 @@ using lld = long double;
 #define debug(x)
 #endif
 
-void _print(int t) { cerr << t; }
+void _print(int t)
+{
+    cerr << t;
+}
 void _print(string t) { cerr << t; }
 void _print(char t) { cerr << t; }
 void _print(lld t) { cerr << t; }
@@ -146,127 +149,122 @@ signed main()
 
     return 0;
 }
-vector<int> ps, a, b;
-pair<int, int> findEndIndex(int i, int volume)
-{
-    // if (volume < b[i])
-    //     return make_pair(-1, volume);
-    debug(mp(i, volume));
-    int base = 0;
-    if (i > 0)
-        base = ps[i - 1];
-    int low = i, high = ps.size() - 1;
-    int ans = ps.size();
-    int mid = 0;
-    debug(base);
-    while (low < high)
-    {
-        mid = low + (high - low) / 2;
-        debug(low);
-        debug(mid);
-        debug(high);
-        debug(ps[mid] - base);
-        if (ps[mid] - base < volume)
-        {
-            debug("if");
-            low = mid + 1;
-        }
-        else if (ps[mid] - base > volume)
-        {
-            debug("else if");
-            high = mid;
-        }
-        else if (ps[mid] - base == volume)
-        {
-            debug("else");
-            break;
-        }
-    }
-    mid = low + (high - low) / 2;
-    int rem = 0;
-    if (ps[mid] - base == volume)
-        ans = mid;
-    else if (ps[mid] - base > volume)
-    {
-        ans = max(0ll, mid - 1);
-        rem = volume - (ps[ans] - base);
-    }
-    else if (ps[mid] - base < volume)
-    {
-        ans = mid;
-        rem = volume - (ps[ans] - base);
-    }
-    // if (rem < 0)
-    // {
-    //     rem = 0;
 
-    // }
-    debug(ans);
-    debug(rem);
-    return make_pair(ans, rem);
+vector<int> a, b, delta, b_sorted, a_sorted;
+map<int, int> btoa, index_of;
+vector<bool> marked;
+
+// create a segment tree to count the no of marked[i] = true from 0 to index-1
+class SegmentTree
+{
+    vector<int> tree;
+    int n;
+
+    void update(int node, int start, int end, int idx, int val)
+    {
+        if (start == end)
+        {
+            tree[node] = val;
+        }
+        else
+        {
+            int mid = (start + end) / 2;
+            if (idx <= mid)
+            {
+                update(2 * node, start, mid, idx, val);
+            }
+            else
+            {
+                update(2 * node + 1, mid + 1, end, idx, val);
+            }
+            tree[node] = tree[2 * node] + tree[2 * node + 1];
+        }
+    }
+
+    int query(int node, int start, int end, int l, int r)
+    {
+        if (r < start || end < l)
+            return 0;
+        if (l <= start && end <= r)
+            return tree[node];
+        int mid = (start + end) / 2;
+        return query(2 * node, start, mid, l, r) + query(2 * node + 1, mid + 1, end, l, r);
+    }
+
+public:
+    SegmentTree(int size)
+    {
+        n = size;
+        tree.assign(4 * n, 0);
+    }
+
+    void update(int idx)
+    {
+        update(1, 0, n - 1, idx, 1);
+    }
+
+    int query(int l, int r)
+    {
+        if (l > r)
+            return 0;
+        return query(1, 0, n - 1, l, r);
+    }
+} *seg_tree;
+
+int count_greetings(int current_b)
+{
+    int corresponding_a = btoa[current_b];
+    int index = index_of[corresponding_a];
+    // marked[index] = true;
+    seg_tree->update(index);
+    // from 0 to index-1, count how many are marked
+    int cntMarked = 0;
+    cntMarked = seg_tree->query(0, index - 1);
+    // debug(cntMarked);
+    int cnt = 0;
+    cnt = lower_bound(a_sorted.begin(), a_sorted.end(), corresponding_a) - a_sorted.begin();
+    return cnt - cntMarked;
 }
-// 1
-// 3
-// 10 20 15
-// 9 8 6
+
 void suraj()
 {
+
     int n;
     cin >> n;
+    // vector<int> a(n), b(n), delta(n);
+    seg_tree = new SegmentTree(n);
+
     a = vector<int>(n);
-    for (int i = 0; i < n; i++)
-        cin >> a[i];
     b = vector<int>(n);
-    for (int i = 0; i < n; i++)
-        cin >> b[i];
-
-    ps = vector<int>(n);
-    ps[0] = b[0];
-    for (int i = 1; i < n; i++)
-        ps[i] = ps[i - 1] + b[i];
-
-    vector<int> cnt(n);
-    vector<int> rem(n);
-
-    debug(ps);
-
+    delta = vector<int>(n);
+    a_sorted = vector<int>(n);
+    b_sorted = vector<int>(n);
+    btoa = map<int, int>();
     for (int i = 0; i < n; i++)
     {
-        int volume = a[i];
-        if(a[i] <= b[i])
-        {
-            rem[i] += volume;
-            continue;
-        }
-        auto result = findEndIndex(i, volume);
-        debug(result);
-        // if(result.first == -1){
-        //     rem[i] += volume;
-        //     continue;
-        // }
-        cnt[i]++;
-        int endIndex = result.first;
-        int remVolume = result.second;
-        if (endIndex + 1 < n)
-            cnt[endIndex + 1]--;
-        if (endIndex + 1 < n)
-            rem[endIndex + 1] += remVolume;
-
-        debug(cnt);
-        debug(rem);
+        cin >> a[i] >> b[i];
+        delta[i] = b[i] - a[i];
+        a_sorted[i] = a[i];
+        b_sorted[i] = b[i];
+        btoa[b[i]] = a[i];
     }
-
-    int carry = 0;
+    sort(a_sorted.begin(), a_sorted.end());
+    sort(b_sorted.begin(), b_sorted.end());
+    index_of = map<int, int>();
+    marked = vector<bool>(n, false);
     for (int i = 0; i < n; i++)
     {
-        carry += cnt[i];
-        cnt[i] = carry;
+        int val = a_sorted[i];
+        index_of[val] = i;
     }
 
-    debug(cnt);
-    debug(rem);
-
+    int ans = 0;
     for (int i = 0; i < n; i++)
-        cout << b[i] * cnt[i] + rem[i] << " ";
-    cout << endl;
+    {
+        int count = count_greetings(b_sorted[i]);
+        // debug(count);
+        ans += count;
+    }
+
+    cout << ans << endl;
 }

@@ -19,13 +19,8 @@ using namespace std;
 #define INF 1e18
 #define endl "\n"
 #define int long long
-#define pb push_back
-#define ppb pop_back
-#define mp make_pair
 #define PI 3.141592653589793238462
 #define set_bits __builtin_popcountll
-#define sz(x) ((int)(x).size())
-#define all(x) (x).begin(), (x).end()
 
 using ll = long long;
 using ull = unsigned long long;
@@ -146,127 +141,108 @@ signed main()
 
     return 0;
 }
-vector<int> ps, a, b;
-pair<int, int> findEndIndex(int i, int volume)
-{
-    // if (volume < b[i])
-    //     return make_pair(-1, volume);
-    debug(mp(i, volume));
-    int base = 0;
-    if (i > 0)
-        base = ps[i - 1];
-    int low = i, high = ps.size() - 1;
-    int ans = ps.size();
-    int mid = 0;
-    debug(base);
-    while (low < high)
-    {
-        mid = low + (high - low) / 2;
-        debug(low);
-        debug(mid);
-        debug(high);
-        debug(ps[mid] - base);
-        if (ps[mid] - base < volume)
-        {
-            debug("if");
-            low = mid + 1;
-        }
-        else if (ps[mid] - base > volume)
-        {
-            debug("else if");
-            high = mid;
-        }
-        else if (ps[mid] - base == volume)
-        {
-            debug("else");
-            break;
-        }
-    }
-    mid = low + (high - low) / 2;
-    int rem = 0;
-    if (ps[mid] - base == volume)
-        ans = mid;
-    else if (ps[mid] - base > volume)
-    {
-        ans = max(0ll, mid - 1);
-        rem = volume - (ps[ans] - base);
-    }
-    else if (ps[mid] - base < volume)
-    {
-        ans = mid;
-        rem = volume - (ps[ans] - base);
-    }
-    // if (rem < 0)
-    // {
-    //     rem = 0;
+int n;
+map<pair<int, int>, int> mp;
+vector<int> b;
 
-    // }
-    debug(ans);
-    debug(rem);
-    return make_pair(ans, rem);
+bool solve(int l, int r)
+{
+    if (mp[make_pair(l, r)] != 0)
+        return mp[make_pair(l, r)];
+
+    if (l == r)
+        return false;
+
+    int len = r - l + 1;
+    int valL = b[l];
+    int valR = b[r];
+    // case 1
+    if (valL == len - 1)
+    {
+        mp[make_pair(l, r)] = 1;
+        return true;
+    }
+    else if (valL > len - 1)
+        ;
+    // debug("do nothing");
+    else if (valL < len - 1)
+    {
+        if (solve(l + valL + 1, r))
+        {
+            mp[make_pair(l, r)] = 1;
+            return true;
+        }
+        else
+            ;
+    }
+
+    // case 2
+    if (valR == len - 1)
+    {
+        mp[make_pair(l, r)] = 1;
+        return true;
+    }
+    else if (valR > len - 1)
+        ;
+    else if (valR < len - 1)
+    {
+        if (solve(l, r - valR - 1))
+        {
+            mp[make_pair(l, r)] = 1;
+            return true;
+        }
+        else
+            ;
+    }
+
+    // case 3
+    for (int i = l; i <= r; i++)
+    {
+        int len = i - l + 1;
+        int valI = b[i];
+        if (valI == len - 1)
+        {
+            if (solve(i, r))
+            {
+                mp[make_pair(l, r)] = 1;
+                return true;
+            }
+            else
+                ;
+        }
+    }
+
+    // case 4
+    for (int i = r; i >= l; i--)
+    {
+        int len = i - l + 1;
+        int valI = b[i];
+        if (valI == len - 1)
+        {
+            if (solve(l, i))
+            {
+                mp[make_pair(l, r)] = 1;
+                return true;
+            }
+            else
+                ;
+        }
+    }
+
+    mp[make_pair(l, r)] = -1;
+    return false;
 }
-// 1
-// 3
-// 10 20 15
-// 9 8 6
+
 void suraj()
 {
-    int n;
+    mp.clear();
     cin >> n;
-    a = vector<int>(n);
-    for (int i = 0; i < n; i++)
-        cin >> a[i];
-    b = vector<int>(n);
-    for (int i = 0; i < n; i++)
+    b = vector<int>(n + 1);
+    for (int i = 1; i <= n; i++)
         cin >> b[i];
-
-    ps = vector<int>(n);
-    ps[0] = b[0];
-    for (int i = 1; i < n; i++)
-        ps[i] = ps[i - 1] + b[i];
-
-    vector<int> cnt(n);
-    vector<int> rem(n);
-
-    debug(ps);
-
-    for (int i = 0; i < n; i++)
-    {
-        int volume = a[i];
-        if(a[i] <= b[i])
-        {
-            rem[i] += volume;
-            continue;
-        }
-        auto result = findEndIndex(i, volume);
-        debug(result);
-        // if(result.first == -1){
-        //     rem[i] += volume;
-        //     continue;
-        // }
-        cnt[i]++;
-        int endIndex = result.first;
-        int remVolume = result.second;
-        if (endIndex + 1 < n)
-            cnt[endIndex + 1]--;
-        if (endIndex + 1 < n)
-            rem[endIndex + 1] += remVolume;
-
-        debug(cnt);
-        debug(rem);
-    }
-
-    int carry = 0;
-    for (int i = 0; i < n; i++)
-    {
-        carry += cnt[i];
-        cnt[i] = carry;
-    }
-
-    debug(cnt);
-    debug(rem);
-
-    for (int i = 0; i < n; i++)
-        cout << b[i] * cnt[i] + rem[i] << " ";
-    cout << endl;
+    // debug(mp[make_pair(1, n)]);
+    if (solve(1, n))
+        cout << "YES" << endl;
+    else
+        cout << "NO" << endl;
 }

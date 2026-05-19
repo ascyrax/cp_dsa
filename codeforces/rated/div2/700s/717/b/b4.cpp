@@ -19,13 +19,8 @@ using namespace std;
 #define INF 1e18
 #define endl "\n"
 #define int long long
-#define pb push_back
-#define ppb pop_back
-#define mp make_pair
 #define PI 3.141592653589793238462
 #define set_bits __builtin_popcountll
-#define sz(x) ((int)(x).size())
-#define all(x) (x).begin(), (x).end()
 
 using ll = long long;
 using ull = unsigned long long;
@@ -146,127 +141,78 @@ signed main()
 
     return 0;
 }
-vector<int> ps, a, b;
-pair<int, int> findEndIndex(int i, int volume)
-{
-    // if (volume < b[i])
-    //     return make_pair(-1, volume);
-    debug(mp(i, volume));
-    int base = 0;
-    if (i > 0)
-        base = ps[i - 1];
-    int low = i, high = ps.size() - 1;
-    int ans = ps.size();
-    int mid = 0;
-    debug(base);
-    while (low < high)
-    {
-        mid = low + (high - low) / 2;
-        debug(low);
-        debug(mid);
-        debug(high);
-        debug(ps[mid] - base);
-        if (ps[mid] - base < volume)
-        {
-            debug("if");
-            low = mid + 1;
-        }
-        else if (ps[mid] - base > volume)
-        {
-            debug("else if");
-            high = mid;
-        }
-        else if (ps[mid] - base == volume)
-        {
-            debug("else");
-            break;
-        }
-    }
-    mid = low + (high - low) / 2;
-    int rem = 0;
-    if (ps[mid] - base == volume)
-        ans = mid;
-    else if (ps[mid] - base > volume)
-    {
-        ans = max(0ll, mid - 1);
-        rem = volume - (ps[ans] - base);
-    }
-    else if (ps[mid] - base < volume)
-    {
-        ans = mid;
-        rem = volume - (ps[ans] - base);
-    }
-    // if (rem < 0)
-    // {
-    //     rem = 0;
 
-    // }
-    debug(ans);
-    debug(rem);
-    return make_pair(ans, rem);
-}
-// 1
-// 3
-// 10 20 15
-// 9 8 6
 void suraj()
 {
     int n;
     cin >> n;
-    a = vector<int>(n);
-    for (int i = 0; i < n; i++)
+    vector<int> a(n + 1);
+    for (int i = 1; i <= n; i++)
+    {
         cin >> a[i];
-    b = vector<int>(n);
-    for (int i = 0; i < n; i++)
-        cin >> b[i];
+    }
 
-    ps = vector<int>(n);
-    ps[0] = b[0];
-    for (int i = 1; i < n; i++)
-        ps[i] = ps[i - 1] + b[i];
-
-    vector<int> cnt(n);
-    vector<int> rem(n);
-
-    debug(ps);
-
-    for (int i = 0; i < n; i++)
+    int xorAll = 0;
+    for (int el : a)
     {
-        int volume = a[i];
-        if(a[i] <= b[i])
+        xorAll ^= el;
+    }
+
+    vector<int> psLeft(n + 1, 0);
+    for (int i = 1; i <= n; i++)
+        psLeft[i] = psLeft[i - 1] ^ a[i];
+
+    vector<int> psRight(n + 1, 0);
+    psRight[n] = a[n];
+    for (int i = n - 1; i >= 1; i--)
+        psRight[i] = psRight[i + 1] ^ a[i];
+
+    if (xorAll == 0)
+    {
+        // final elements cnt is even
+
+        for (int i = 1; i <= n; i++)
         {
-            rem[i] += volume;
-            continue;
+            int xorLeft = psLeft[i];
+            int xorRight = psRight[i + 1];
+            if (xorLeft == xorRight)
+            {
+                cout << "YES" << endl;
+                return;
+            }
         }
-        auto result = findEndIndex(i, volume);
-        debug(result);
-        // if(result.first == -1){
-        //     rem[i] += volume;
-        //     continue;
-        // }
-        cnt[i]++;
-        int endIndex = result.first;
-        int remVolume = result.second;
-        if (endIndex + 1 < n)
-            cnt[endIndex + 1]--;
-        if (endIndex + 1 < n)
-            rem[endIndex + 1] += remVolume;
-
-        debug(cnt);
-        debug(rem);
+        cout << "NO" << endl;
     }
-
-    int carry = 0;
-    for (int i = 0; i < n; i++)
+    else
     {
-        carry += cnt[i];
-        cnt[i] = carry;
+        // final elements cnt is odd
+        int leftBoundary = 0;
+        for (int i = 1; i <= n; i++)
+        {
+            int xorLeft = psLeft[i];
+            leftBoundary = i;
+            if (xorLeft == xorAll)
+                break;
+        }
+
+        int rightBoundary = n + 1;
+        for (int i = n; i > leftBoundary; i--)
+        {
+            int xorRight = psRight[i];
+            rightBoundary = i;
+            if (xorRight == xorAll)
+                break;
+        }
+
+        int xorMid = 0;
+        for (int i = leftBoundary + 1; i < rightBoundary; i++)
+        {
+            xorMid ^= a[i];
+        }
+
+        if (xorMid == xorAll)
+            cout << "YES" << endl;
+        else
+            cout << "NO" << endl;
     }
-
-    debug(cnt);
-    debug(rem);
-
-    for (int i = 0; i < n; i++)
-        cout << b[i] * cnt[i] + rem[i] << " ";
-    cout << endl;
 }

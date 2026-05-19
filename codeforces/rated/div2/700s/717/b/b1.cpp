@@ -146,127 +146,143 @@ signed main()
 
     return 0;
 }
-vector<int> ps, a, b;
-pair<int, int> findEndIndex(int i, int volume)
+bool allEmpty(map<int, int> &cnt)
 {
-    // if (volume < b[i])
-    //     return make_pair(-1, volume);
-    debug(mp(i, volume));
-    int base = 0;
-    if (i > 0)
-        base = ps[i - 1];
-    int low = i, high = ps.size() - 1;
-    int ans = ps.size();
-    int mid = 0;
-    debug(base);
-    while (low < high)
+    for (auto it : cnt)
     {
-        mid = low + (high - low) / 2;
-        debug(low);
-        debug(mid);
-        debug(high);
-        debug(ps[mid] - base);
-        if (ps[mid] - base < volume)
-        {
-            debug("if");
-            low = mid + 1;
-        }
-        else if (ps[mid] - base > volume)
-        {
-            debug("else if");
-            high = mid;
-        }
-        else if (ps[mid] - base == volume)
-        {
-            debug("else");
-            break;
-        }
+        if (it.second > 0)
+            return false;
     }
-    mid = low + (high - low) / 2;
-    int rem = 0;
-    if (ps[mid] - base == volume)
-        ans = mid;
-    else if (ps[mid] - base > volume)
-    {
-        ans = max(0ll, mid - 1);
-        rem = volume - (ps[ans] - base);
-    }
-    else if (ps[mid] - base < volume)
-    {
-        ans = mid;
-        rem = volume - (ps[ans] - base);
-    }
-    // if (rem < 0)
-    // {
-    //     rem = 0;
-
-    // }
-    debug(ans);
-    debug(rem);
-    return make_pair(ans, rem);
+    return true;
 }
+
+bool allEqual(vector<int> &v)
+{
+    for (int i = 1; i < v.size(); i++)
+    {
+        if (v[i] != v[0])
+            return false;
+    }
+    return true;
+}
+
+bool check(int d, vector<int> &bitCnt, vector<int> &a)
+{
+    debug(d);
+    debug(bitCnt);
+    debug(a);
+    // no of elements in the final vector is d,
+    // => each impBit should be its cnt/d times in each element :)
+    map<int, int> cnt;
+    int n = a.size();
+    vector<int> impBits;
+    for (int i = 0; i < 31; i++)
+    {
+        impBits.push_back(i);
+        cnt[i] = bitCnt[i] / d;
+    }
+    debug(cnt);
+    vector<int> shrinkedVector;
+    int i = 0;
+    int val = 0;
+
+    while (i < n)
+    {
+        val = val ^ a[i];
+        for (int j = 0; j < impBits.size(); j++)
+        {
+            if (val & (1 << impBits[j]))
+                cnt[impBits[j]]--;
+        }
+        // if any is <0, => this cannot be the answer
+        for (int j = 0; j < impBits.size(); j++)
+        {
+            if (cnt[impBits[j]] < 0)
+                return false;
+        }
+        if (allEmpty(cnt))
+        {
+            shrinkedVector.push_back(val);
+            val = 0;
+            // repopulate the cnt map for the next element in the shrinked vector
+            for (int i = 0; i < 31; i++)
+                cnt[i] = bitCnt[i] / d;
+        }
+        i++;
+    }
+    debug(shrinkedVector);
+    if (allEqual(shrinkedVector))
+        return true;
+    else
+        return false;
+}
+
 // 1
 // 3
-// 10 20 15
-// 9 8 6
+// 37844378 1042455423 1013182181
+
 void suraj()
 {
     int n;
     cin >> n;
-    a = vector<int>(n);
+    vector<int> a(n, 0);
+    bool flag = true;
+
     for (int i = 0; i < n; i++)
         cin >> a[i];
-    b = vector<int>(n);
-    for (int i = 0; i < n; i++)
-        cin >> b[i];
 
-    ps = vector<int>(n);
-    ps[0] = b[0];
-    for (int i = 1; i < n; i++)
-        ps[i] = ps[i - 1] + b[i];
-
-    vector<int> cnt(n);
-    vector<int> rem(n);
-
-    debug(ps);
-
+    vector<int> bitCnt(31, 0);
     for (int i = 0; i < n; i++)
     {
-        int volume = a[i];
-        if(a[i] <= b[i])
+        for (int j = 0; j < 31; j++)
         {
-            rem[i] += volume;
-            continue;
+            if (a[i] & (1 << j))
+                bitCnt[j]++;
         }
-        auto result = findEndIndex(i, volume);
-        debug(result);
-        // if(result.first == -1){
-        //     rem[i] += volume;
-        //     continue;
-        // }
-        cnt[i]++;
-        int endIndex = result.first;
-        int remVolume = result.second;
-        if (endIndex + 1 < n)
-            cnt[endIndex + 1]--;
-        if (endIndex + 1 < n)
-            rem[endIndex + 1] += remVolume;
-
-        debug(cnt);
-        debug(rem);
     }
-
-    int carry = 0;
-    for (int i = 0; i < n; i++)
+    int gcd = 0;
+    for (int i = 0; i < 31; i++)
     {
-        carry += cnt[i];
-        cnt[i] = carry;
+        if (bitCnt[i] > 0)
+        {
+            // debug(gcd);
+            gcd = __gcd(gcd, bitCnt[i]);
+            // debug(gcd);
+        }
+    }
+    // debug(bitCnt);
+    // debug(gcd);
+    if (gcd == 1)
+    {
+        // flag = false :)
+        cout << "NO" << endl;
+        return;
     }
 
-    debug(cnt);
-    debug(rem);
+    // first find the divisors of the gcd and store it in a vector
+    vector<int> divisors;
+    for (int i = 2; i * i <= gcd; i++)
+    {
+        if (gcd % i == 0)
+        {
+            if (i != 1)
+                divisors.push_back(i);
+            if (i != gcd / i)
+                divisors.push_back(gcd / i);
+        }
+    }
+    divisors.push_back(gcd);
 
-    for (int i = 0; i < n; i++)
-        cout << b[i] * cnt[i] + rem[i] << " ";
-    cout << endl;
+    debug(divisors);
+    // now for the gcd and all the divisors of the gcd, we can check if they are valid or not
+
+    for (int i = 0; i < divisors.size(); i++)
+    {
+        int d = divisors[i];
+        flag = check(d, bitCnt, a);
+        if (flag)
+            break;
+    }
+
+    cout << (flag ? "YES" : "NO") << endl;
 }

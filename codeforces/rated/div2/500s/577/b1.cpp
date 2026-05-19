@@ -128,7 +128,7 @@ signed main()
 
     int t = 1;
 
-    cin >> t;
+    // cin>>t;
 
     for (int i = 1; i <= t; i++)
     {
@@ -146,127 +146,125 @@ signed main()
 
     return 0;
 }
-vector<int> ps, a, b;
-pair<int, int> findEndIndex(int i, int volume)
-{
-    // if (volume < b[i])
-    //     return make_pair(-1, volume);
-    debug(mp(i, volume));
-    int base = 0;
-    if (i > 0)
-        base = ps[i - 1];
-    int low = i, high = ps.size() - 1;
-    int ans = ps.size();
-    int mid = 0;
-    debug(base);
-    while (low < high)
-    {
-        mid = low + (high - low) / 2;
-        debug(low);
-        debug(mid);
-        debug(high);
-        debug(ps[mid] - base);
-        if (ps[mid] - base < volume)
-        {
-            debug("if");
-            low = mid + 1;
-        }
-        else if (ps[mid] - base > volume)
-        {
-            debug("else if");
-            high = mid;
-        }
-        else if (ps[mid] - base == volume)
-        {
-            debug("else");
-            break;
-        }
-    }
-    mid = low + (high - low) / 2;
-    int rem = 0;
-    if (ps[mid] - base == volume)
-        ans = mid;
-    else if (ps[mid] - base > volume)
-    {
-        ans = max(0ll, mid - 1);
-        rem = volume - (ps[ans] - base);
-    }
-    else if (ps[mid] - base < volume)
-    {
-        ans = mid;
-        rem = volume - (ps[ans] - base);
-    }
-    // if (rem < 0)
-    // {
-    //     rem = 0;
 
-    // }
-    debug(ans);
-    debug(rem);
-    return make_pair(ans, rem);
-}
-// 1
-// 3
-// 10 20 15
-// 9 8 6
 void suraj()
 {
     int n;
     cin >> n;
-    a = vector<int>(n);
-    for (int i = 0; i < n; i++)
-        cin >> a[i];
-    b = vector<int>(n);
-    for (int i = 0; i < n; i++)
-        cin >> b[i];
-
-    ps = vector<int>(n);
-    ps[0] = b[0];
-    for (int i = 1; i < n; i++)
-        ps[i] = ps[i - 1] + b[i];
-
-    vector<int> cnt(n);
-    vector<int> rem(n);
-
-    debug(ps);
-
-    for (int i = 0; i < n; i++)
+    vector<int> a(n);
+    int totSum = 0;
+    for (int &i : a)
     {
-        int volume = a[i];
-        if(a[i] <= b[i])
+
+        cin >> i;
+        totSum += i;
+    }
+    if (totSum % 2 == 1)
+    {
+        cout << "NO" << endl;
+        return;
+    }
+    if (n == 2)
+    {
+        if (a[0] == a[1])
+            cout << "YES" << endl;
+        else
+            cout << "NO" << endl;
+        return;
+    }
+
+    sort(a.begin(), a.end());
+    debug(a);
+
+    int pr = n - 1, pl = n - 2;
+    int valr = a[pr];
+    int vall = a[pl];
+    debug(vall);
+    debug(valr);
+    while (1)
+    {
+        if (valr == vall)
         {
-            rem[i] += volume;
-            continue;
+            vall = 0;
+            valr = 0;
+            // pr -= 2;
+            pl -= 2;
+            pr = pl + 1;
+            if (pr < 0 || pl < 0)
+                break;
+            vall = a[pl];
+            valr = a[pr];
         }
-        auto result = findEndIndex(i, volume);
-        debug(result);
-        // if(result.first == -1){
-        //     rem[i] += volume;
-        //     continue;
-        // }
-        cnt[i]++;
-        int endIndex = result.first;
-        int remVolume = result.second;
-        if (endIndex + 1 < n)
-            cnt[endIndex + 1]--;
-        if (endIndex + 1 < n)
-            rem[endIndex + 1] += remVolume;
-
-        debug(cnt);
-        debug(rem);
+        else if (valr > vall)
+        {
+            valr -= vall;
+            vall = 0;
+            pl--;
+            if (pr < 0 || pl < 0)
+                break;
+            vall = a[pl];
+        }
+        else if (valr < vall)
+        {
+            valr = vall - valr;
+            vall = 0; // for now
+            // update for future
+            pr = pl;
+            pl = pl - 1;
+            if (pr < 0 || pl < 0)
+                break;
+            vall = a[pl];
+        }
+        debug(pl);
+        debug(vall);
+        debug(pr);
+        debug(valr);
     }
+    debug(pl);
+    debug(vall);
+    debug(pr);
+    debug(valr);
 
-    int carry = 0;
-    for (int i = 0; i < n; i++)
+    if (vall == 0 && valr == 0)
+        cout << "YES" << endl;
+    else
     {
-        carry += cnt[i];
-        cnt[i] = carry;
+        int index = -1;
+        if (vall > 0)
+        {
+            index = pl;
+            int total = a[pl];
+            int diff = total - vall;
+            int sum = 0;
+            for (int i = 0; i < n; i++)
+            {
+                if (i == index)
+                    continue;
+                sum += a[i];
+            }
+            sum -= diff;
+            if (sum >= vall)
+                cout << "YES" << endl;
+            else
+                cout << "NO" << endl;
+        }
+        else if (valr > 0)
+        {
+            index = pr;
+            int total = a[pr];
+            int diff = total - valr;
+            int sum = 0;
+            for (int i = 0; i < n; i++)
+            {
+                if (i == index)
+                    continue;
+                sum += a[i];
+            }
+            sum -= diff;
+            if (sum >= valr)
+                cout << "YES" << endl;
+            else
+                cout << "NO" << endl;
+        }
     }
-
-    debug(cnt);
-    debug(rem);
-
-    for (int i = 0; i < n; i++)
-        cout << b[i] * cnt[i] + rem[i] << " ";
-    cout << endl;
 }

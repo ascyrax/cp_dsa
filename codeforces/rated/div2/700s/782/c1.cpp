@@ -19,12 +19,8 @@ using namespace std;
 #define INF 1e18
 #define endl "\n"
 #define int long long
-#define pb push_back
-#define ppb pop_back
 #define PI 3.141592653589793238462
 #define set_bits __builtin_popcountll
-#define sz(x) ((int)(x).size())
-#define all(x) (x).begin(), (x).end()
 
 using ll = long long;
 using ull = unsigned long long;
@@ -127,7 +123,7 @@ signed main()
 
     int t = 1;
 
-    // cin>>t;
+    cin >> t;
 
     for (int i = 1; i <= t; i++)
     {
@@ -148,98 +144,48 @@ signed main()
 
 void suraj()
 {
-    int n;
-    cin >> n;
-
-    vector<vector<int>> edges(n);
-    map<pair<int, int>, int> mp; // for the output, cz the output is dependent on the input order :)
-    for (int i = 1; i <= n - 1; i++)
+    int n, a, b;
+    cin >> n >> a >> b;
+    vector<int> positions(n + 1, 0);
+    for (int i = 1; i <= n; i++)
     {
-        int a, b;
-        cin >> a >> b;
-        a--;
-        b--;
-        edges[a].push_back(b);
-        edges[b].push_back(a);
-
-        if (a > b)
-        {
-            swap(a, b);
-        }
-        mp[make_pair(a, b)] = i - 1;
+        cin >> positions[i];
     }
-    debug(mp);
-    vector<int> leaves;
-    for (int i = 0; i < n; i++)
-    {
-        if (edges[i].size() == 1)
-        {
-            leaves.push_back(i);
-        }
-    }
-    debug(leaves);
-    vector<int> ans(n - 1, -1);
-    for (int i = 0; i < leaves.size(); i++)
-    {
-        int leaf = leaves[i];
-        int parent = edges[leaf][0];
-        int a = min(leaf, parent);
-        int b = max(leaf, parent);
-        // debug(leaf);
-        // debug(parent);
-        int input_index = mp[make_pair(a, b)];
-        // debug(input_index);
-        ans[input_index] = i;
-    }
-    // edge case, dont put the edge 1 with edge 0, on two leaves with the same parent, if possible
-    if (leaves.size() >= 2)
-    {
-        int leaf1 = leaves[1];
-        int parent1 = edges[leaf1][0];
+    // note that making capital = positions[i] => making each position from 1 to i, as the capital one by one :)
 
-        int input_index1 = mp[make_pair(min(leaf1, parent1), max(leaf1, parent1))];
+    // case 1. capital = 0 always
 
-        int leaf0 = leaves[0];
-        int parent0 = edges[leaf0][0];
+    // case 2.  capital = positions[i], which will cost a*(positions[i]);
 
-        if (parent0 == parent1)
-        {
-            // swap leaf1 with a leaf which has a different parent than parent0, if possible
-            for (int leaf : leaves)
-            {
-                int parent = edges[leaf][0];
-                if (parent != parent0)
-                {
-                    int a = min(leaf, parent);
-                    int b = max(leaf, parent);
-                    int input_index = mp[make_pair(a, b)];
-                    int prev_value = ans[input_index];
-                    ans[input_index] = 1;
-                    ans[input_index1] = prev_value;
-                    break;
-                }
-            }
-        }
+    vector<int> ps(n + 1, 0);
+    ps[0] = 0;
+    ps[1] = positions[1];
+    for (int i = 2; i <= n; i++)
+        ps[i] = ps[i - 1] + positions[i];
+
+    vector<int> costB(n + 1, 0); // costB[i] = if i is the last capital, then total cost of conquering till the nth city :)
+    // note that we have not multiplied this by b yet :)
+    costB[n] = 0;
+    for (int i = n - 1; i >= 0; i--)
+    {
+        costB[i] = costB[i + 1] + (n - i) * (positions[i + 1] - positions[i]);
     }
 
-    int ptr = 0;
-    for (int j = leaves.size(); j < n - 1; j++)
-    {
-        while (ans[ptr] != -1)
-        {
-            ptr++;
-        }
-        ans[ptr] = j;
-    }
-    debug(ans);
+    // case 1
+    int ans1 = b * costB[0];
 
-    if (n == 2)
+    // case 2
+    int ans2 = 0;
+    int minAns2 = 1e14;
+    for (int i = 1; i <= n; i++)
     {
-        cout << "0\n";
-        return;
+        // final capital location = positions[i]
+        int costCapital = a * positions[i];
+        int costConquerAfterCapital = b * costB[i];
+        int costConquerBeforeCapital = b * positions[i];
+        ans2 = costCapital + costConquerAfterCapital + costConquerBeforeCapital;
+        minAns2 = min(minAns2, ans2);
     }
 
-    for (int i : ans)
-        cout << i << endl;
-    // cout << endl;
+    cout << min(ans1, minAns2) << endl;
 }

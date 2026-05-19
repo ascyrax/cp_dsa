@@ -19,12 +19,8 @@ using namespace std;
 #define INF 1e18
 #define endl "\n"
 #define int long long
-#define pb push_back
-#define ppb pop_back
 #define PI 3.141592653589793238462
 #define set_bits __builtin_popcountll
-#define sz(x) ((int)(x).size())
-#define all(x) (x).begin(), (x).end()
 
 using ll = long long;
 using ull = unsigned long long;
@@ -148,98 +144,63 @@ signed main()
 
 void suraj()
 {
-    int n;
-    cin >> n;
 
-    vector<vector<int>> edges(n);
-    map<pair<int, int>, int> mp; // for the output, cz the output is dependent on the input order :)
-    for (int i = 1; i <= n - 1; i++)
-    {
-        int a, b;
-        cin >> a >> b;
-        a--;
-        b--;
-        edges[a].push_back(b);
-        edges[b].push_back(a);
+    int n, k1, k2;
+    cin >> n >> k1 >> k2;
 
-        if (a > b)
-        {
-            swap(a, b);
-        }
-        mp[make_pair(a, b)] = i - 1;
-    }
-    debug(mp);
-    vector<int> leaves;
+    vector<int> a(n), b(n);
+    for (int &i : a)
+        cin >> i;
+    for (int &i : b)
+        cin >> i;
+
+    vector<int> diffs(n);
     for (int i = 0; i < n; i++)
     {
-        if (edges[i].size() == 1)
-        {
-            leaves.push_back(i);
-        }
+        diffs[i] = abs(a[i] - b[i]);
     }
-    debug(leaves);
-    vector<int> ans(n - 1, -1);
-    for (int i = 0; i < leaves.size(); i++)
+    debug(diffs);
+    sort(diffs.rbegin(), diffs.rend());
+    debug(diffs);
+
+    vector<int> temp; // difference between the sorted diffs' elements
+    for (int i = 1; i <= n - 1; i++)
     {
-        int leaf = leaves[i];
-        int parent = edges[leaf][0];
-        int a = min(leaf, parent);
-        int b = max(leaf, parent);
-        // debug(leaf);
-        // debug(parent);
-        int input_index = mp[make_pair(a, b)];
-        // debug(input_index);
-        ans[input_index] = i;
+        int delta = diffs[i - 1] - diffs[i];
+        temp.push_back(delta * i);
     }
-    // edge case, dont put the edge 1 with edge 0, on two leaves with the same parent, if possible
-    if (leaves.size() >= 2)
-    {
-        int leaf1 = leaves[1];
-        int parent1 = edges[leaf1][0];
+    temp.push_back((diffs[n - 1] - 0) * n);
+    debug(temp);
+    vector<int> ps(n, 0);
+    ps[0] = temp[0];
+    for (int i = 1; i <= n - 1; i++)
+        ps[i] = ps[i - 1] + temp[i];
+    debug(ps);
 
-        int input_index1 = mp[make_pair(min(leaf1, parent1), max(leaf1, parent1))];
+    int index = upper_bound(ps.begin(), ps.end(), k1 + k2) - ps.begin();
+    // int carry = ps[index] - k1 - k2;
+    
+    debug(index);
+    int val = diffs[index];
+    if (index >= n)
+        val = 0;
 
-        int leaf0 = leaves[0];
-        int parent0 = edges[leaf0][0];
+    int kLeft = k1 + k2 - (index - 1 >= 0 ? ps[index - 1] : 0);
+    debug(val);
+    debug(kLeft);
+    int q = kLeft / (index + 1);
+    int r = kLeft % (index + 1);
+    debug(q);
+    debug(r);
+    for (int i = 0; i < r; i++)
+        diffs[i] = val - q;
+    debug(diffs);
+    for (int i = r; i < index; i++)
+        diffs[i] = val - q + 1;
+    debug(diffs);
+    int ans = 0;
+    for (int i = 0; i < n; i++)
+        ans += (diffs[i] * diffs[i]);
 
-        if (parent0 == parent1)
-        {
-            // swap leaf1 with a leaf which has a different parent than parent0, if possible
-            for (int leaf : leaves)
-            {
-                int parent = edges[leaf][0];
-                if (parent != parent0)
-                {
-                    int a = min(leaf, parent);
-                    int b = max(leaf, parent);
-                    int input_index = mp[make_pair(a, b)];
-                    int prev_value = ans[input_index];
-                    ans[input_index] = 1;
-                    ans[input_index1] = prev_value;
-                    break;
-                }
-            }
-        }
-    }
-
-    int ptr = 0;
-    for (int j = leaves.size(); j < n - 1; j++)
-    {
-        while (ans[ptr] != -1)
-        {
-            ptr++;
-        }
-        ans[ptr] = j;
-    }
-    debug(ans);
-
-    if (n == 2)
-    {
-        cout << "0\n";
-        return;
-    }
-
-    for (int i : ans)
-        cout << i << endl;
-    // cout << endl;
+    cout << ans << endl;
 }

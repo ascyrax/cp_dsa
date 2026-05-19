@@ -146,127 +146,64 @@ signed main()
 
     return 0;
 }
-vector<int> ps, a, b;
-pair<int, int> findEndIndex(int i, int volume)
-{
-    // if (volume < b[i])
-    //     return make_pair(-1, volume);
-    debug(mp(i, volume));
-    int base = 0;
-    if (i > 0)
-        base = ps[i - 1];
-    int low = i, high = ps.size() - 1;
-    int ans = ps.size();
-    int mid = 0;
-    debug(base);
-    while (low < high)
-    {
-        mid = low + (high - low) / 2;
-        debug(low);
-        debug(mid);
-        debug(high);
-        debug(ps[mid] - base);
-        if (ps[mid] - base < volume)
-        {
-            debug("if");
-            low = mid + 1;
-        }
-        else if (ps[mid] - base > volume)
-        {
-            debug("else if");
-            high = mid;
-        }
-        else if (ps[mid] - base == volume)
-        {
-            debug("else");
-            break;
-        }
-    }
-    mid = low + (high - low) / 2;
-    int rem = 0;
-    if (ps[mid] - base == volume)
-        ans = mid;
-    else if (ps[mid] - base > volume)
-    {
-        ans = max(0ll, mid - 1);
-        rem = volume - (ps[ans] - base);
-    }
-    else if (ps[mid] - base < volume)
-    {
-        ans = mid;
-        rem = volume - (ps[ans] - base);
-    }
-    // if (rem < 0)
-    // {
-    //     rem = 0;
 
+vector<int> a;
+int n;
+vector<int> solved;
+int solve(int index)
+{
+    // debug(index);
+    // debug(solved[index]);
+    // debug(solved);
+    if (index < n)
+    {
+        if (solved[index] < n)
+            return solved[index];
+    }
+    else if (index == n)
+        return 0;
+    else if (index > n)
+        return n;
+    // base case
+    // if (index == n)
+    // {
+    //     debug("if");
+    //     solved[index] = 0;
+    //     // debug(solved);
     // }
-    debug(ans);
-    debug(rem);
-    return make_pair(ans, rem);
+    // else if (index > n)
+    // {
+    //     debug("else if");
+    //     // solved[index] = n;
+    //     return n;
+    //     // debug(solved);
+    // }
+    // else
+    {
+        // debug("else");
+        solved[index] =
+            min(solved[index], min(solve(index + a[index] + 1), 1 + solve(index + 1)));
+        // debug(solved);
+    }
+    return solved[index];
 }
-// 1
-// 3
-// 10 20 15
-// 9 8 6
+
 void suraj()
 {
-    int n;
     cin >> n;
     a = vector<int>(n);
+    solved = vector<int>(n + 1, n);
     for (int i = 0; i < n; i++)
         cin >> a[i];
-    b = vector<int>(n);
-    for (int i = 0; i < n; i++)
-        cin >> b[i];
 
-    ps = vector<int>(n);
-    ps[0] = b[0];
-    for (int i = 1; i < n; i++)
-        ps[i] = ps[i - 1] + b[i];
-
-    vector<int> cnt(n);
-    vector<int> rem(n);
-
-    debug(ps);
-
-    for (int i = 0; i < n; i++)
-    {
-        int volume = a[i];
-        if(a[i] <= b[i])
-        {
-            rem[i] += volume;
-            continue;
-        }
-        auto result = findEndIndex(i, volume);
-        debug(result);
-        // if(result.first == -1){
-        //     rem[i] += volume;
-        //     continue;
-        // }
-        cnt[i]++;
-        int endIndex = result.first;
-        int remVolume = result.second;
-        if (endIndex + 1 < n)
-            cnt[endIndex + 1]--;
-        if (endIndex + 1 < n)
-            rem[endIndex + 1] += remVolume;
-
-        debug(cnt);
-        debug(rem);
-    }
-
-    int carry = 0;
-    for (int i = 0; i < n; i++)
-    {
-        carry += cnt[i];
-        cnt[i] = carry;
-    }
-
-    debug(cnt);
-    debug(rem);
-
-    for (int i = 0; i < n; i++)
-        cout << b[i] * cnt[i] + rem[i] << " ";
-    cout << endl;
+    // debug(a);
+    // debug(solved);
+    // int ans = min(1 + solve(1), solve(0 + a[0] + 1));
+    int ans = solve(0);
+    // debug(solved);
+    cout << ans << endl;
 }
+
+// 1
+// 5
+// 1 2 3 4 5

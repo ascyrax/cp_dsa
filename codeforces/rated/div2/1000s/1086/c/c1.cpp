@@ -146,127 +146,75 @@ signed main()
 
     return 0;
 }
-vector<int> ps, a, b;
-pair<int, int> findEndIndex(int i, int volume)
-{
-    // if (volume < b[i])
-    //     return make_pair(-1, volume);
-    debug(mp(i, volume));
-    int base = 0;
-    if (i > 0)
-        base = ps[i - 1];
-    int low = i, high = ps.size() - 1;
-    int ans = ps.size();
-    int mid = 0;
-    debug(base);
-    while (low < high)
-    {
-        mid = low + (high - low) / 2;
-        debug(low);
-        debug(mid);
-        debug(high);
-        debug(ps[mid] - base);
-        if (ps[mid] - base < volume)
-        {
-            debug("if");
-            low = mid + 1;
-        }
-        else if (ps[mid] - base > volume)
-        {
-            debug("else if");
-            high = mid;
-        }
-        else if (ps[mid] - base == volume)
-        {
-            debug("else");
-            break;
-        }
-    }
-    mid = low + (high - low) / 2;
-    int rem = 0;
-    if (ps[mid] - base == volume)
-        ans = mid;
-    else if (ps[mid] - base > volume)
-    {
-        ans = max(0ll, mid - 1);
-        rem = volume - (ps[ans] - base);
-    }
-    else if (ps[mid] - base < volume)
-    {
-        ans = mid;
-        rem = volume - (ps[ans] - base);
-    }
-    // if (rem < 0)
-    // {
-    //     rem = 0;
+pair<double, double> dp[100000][2];
 
-    // }
-    debug(ans);
-    debug(rem);
-    return make_pair(ans, rem);
-}
-// 1
-// 3
-// 10 20 15
-// 9 8 6
 void suraj()
 {
+
     int n;
     cin >> n;
-    a = vector<int>(n);
+    vector<int> value(n), difficulty(n);
     for (int i = 0; i < n; i++)
-        cin >> a[i];
-    b = vector<int>(n);
-    for (int i = 0; i < n; i++)
-        cin >> b[i];
+    {
+        cin >> value[i] >> difficulty[i];
+    }
 
-    ps = vector<int>(n);
-    ps[0] = b[0];
+    // reset dp
+    for (int i = 0; i <= n; i++)
+    {
+        dp[i][0] = dp[i][1] = {0.0, 0.0};
+    }
+
+    dp[0][0] = {0.0, 1.0};                                                       // not selected
+    dp[0][1] = {static_cast<double>(value[0]), (100.0 - difficulty[0]) / 100.0}; // selected
+
+    debug(dp[0][0]);
+    debug(dp[0][1]);
+
     for (int i = 1; i < n; i++)
-        ps[i] = ps[i - 1] + b[i];
-
-    vector<int> cnt(n);
-    vector<int> rem(n);
-
-    debug(ps);
-
-    for (int i = 0; i < n; i++)
     {
-        int volume = a[i];
-        if(a[i] <= b[i])
+        // if i is not selected
+        if (dp[i - 1][0].first > dp[i - 1][1].first)
+            dp[i][0] = dp[i - 1][0];
+        else if (dp[i - 1][0].first < dp[i - 1][1].first)
+            dp[i][0] = dp[i - 1][1];
+        else
         {
-            rem[i] += volume;
-            continue;
+            // both are equal
+            if (dp[i - 1][0].second > dp[i - 1][1].second)
+                dp[i][0] = dp[i - 1][0];
+            else
+                dp[i][0] = dp[i - 1][1];
         }
-        auto result = findEndIndex(i, volume);
-        debug(result);
-        // if(result.first == -1){
-        //     rem[i] += volume;
-        //     continue;
-        // }
-        cnt[i]++;
-        int endIndex = result.first;
-        int remVolume = result.second;
-        if (endIndex + 1 < n)
-            cnt[endIndex + 1]--;
-        if (endIndex + 1 < n)
-            rem[endIndex + 1] += remVolume;
 
-        debug(cnt);
-        debug(rem);
+        // if i is selected
+        if (dp[i - 1][0].first + dp[i - 1][0].second * value[i] > dp[i - 1][1].first + dp[i - 1][1].second * value[i])
+        {
+            dp[i][1].first = dp[i - 1][0].first + dp[i - 1][0].second * value[i];
+            dp[i][1].second = dp[i - 1][0].second * (100 - difficulty[i]) / 100.0;
+        }
+        else if (dp[i - 1][0].first + dp[i - 1][0].second * value[i] < dp[i - 1][1].first + dp[i - 1][1].second * value[i])
+        {
+            dp[i][1].first = dp[i - 1][1].first + dp[i - 1][1].second * value[i];
+            dp[i][1].second = dp[i - 1][1].second * (100 - difficulty[i]) / 100.0;
+        }
+        else
+        {
+            if (dp[i - 1][0].second * (100 - difficulty[i]) / 100.0 > dp[i - 1][1].second * (100 - difficulty[i]) / 100.0)
+            {
+                dp[i][1].first = dp[i - 1][0].first + dp[i - 1][0].second * value[i];
+                dp[i][1].second = dp[i - 1][0].second * (100 - difficulty[i]) / 100.0;
+            }
+            else
+            {
+                dp[i][1].first = dp[i - 1][1].first + dp[i - 1][1].second * value[i];
+                dp[i][1].second = dp[i - 1][1].second * (100 - difficulty[i]) / 100.0;
+            }
+        }
+
+        debug(dp[i][0]);
+        debug(dp[i][1]);
     }
 
-    int carry = 0;
-    for (int i = 0; i < n; i++)
-    {
-        carry += cnt[i];
-        cnt[i] = carry;
-    }
-
-    debug(cnt);
-    debug(rem);
-
-    for (int i = 0; i < n; i++)
-        cout << b[i] * cnt[i] + rem[i] << " ";
-    cout << endl;
+    cout << max(dp[n - 1][0].first, dp[n - 1][1].first) << endl;
 }

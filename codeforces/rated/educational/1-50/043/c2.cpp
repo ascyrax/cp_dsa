@@ -1,3 +1,5 @@
+
+
 // @author: ascyrax
 
 #include <iostream>
@@ -19,12 +21,8 @@ using namespace std;
 #define INF 1e18
 #define endl "\n"
 #define int long long
-#define pb push_back
-#define ppb pop_back
 #define PI 3.141592653589793238462
 #define set_bits __builtin_popcountll
-#define sz(x) ((int)(x).size())
-#define all(x) (x).begin(), (x).end()
 
 using ll = long long;
 using ull = unsigned long long;
@@ -150,96 +148,36 @@ void suraj()
 {
     int n;
     cin >> n;
-
-    vector<vector<int>> edges(n);
-    map<pair<int, int>, int> mp; // for the output, cz the output is dependent on the input order :)
-    for (int i = 1; i <= n - 1; i++)
+    vector<pair<int, pair<int, int>>> ranges;
+    for (int i = 1; i <= n; i++)
     {
-        int a, b;
-        cin >> a >> b;
-        a--;
-        b--;
-        edges[a].push_back(b);
-        edges[b].push_back(a);
+        int l, r;
+        cin >> l >> r;
+        ranges.push_back(make_pair(l, make_pair(r, i)));
+    }
+    sort(ranges.begin(), ranges.end());
+    // set<int> st;
+    map<int, int> indexOf;
 
-        if (a > b)
+    // int l0 = ranges[0].first;
+    int r0 = ranges[0].second.first;
+    int ind0 = ranges[0].second.second;
+
+    int mxR = r0;
+    indexOf[r0] = ind0;
+    for (int i = 1; i < n; i++)
+    {
+        // int l = ranges[i].first;
+        int r = ranges[i].second.first;
+        int index = ranges[i].second.second;
+        indexOf[r] = index;
+        if (r <= mxR)
         {
-            swap(a, b);
+            cout << index << " " << indexOf[mxR] << endl;
+            return;
         }
-        mp[make_pair(a, b)] = i - 1;
+        else
+            mxR = r;
     }
-    debug(mp);
-    vector<int> leaves;
-    for (int i = 0; i < n; i++)
-    {
-        if (edges[i].size() == 1)
-        {
-            leaves.push_back(i);
-        }
-    }
-    debug(leaves);
-    vector<int> ans(n - 1, -1);
-    for (int i = 0; i < leaves.size(); i++)
-    {
-        int leaf = leaves[i];
-        int parent = edges[leaf][0];
-        int a = min(leaf, parent);
-        int b = max(leaf, parent);
-        // debug(leaf);
-        // debug(parent);
-        int input_index = mp[make_pair(a, b)];
-        // debug(input_index);
-        ans[input_index] = i;
-    }
-    // edge case, dont put the edge 1 with edge 0, on two leaves with the same parent, if possible
-    if (leaves.size() >= 2)
-    {
-        int leaf1 = leaves[1];
-        int parent1 = edges[leaf1][0];
-
-        int input_index1 = mp[make_pair(min(leaf1, parent1), max(leaf1, parent1))];
-
-        int leaf0 = leaves[0];
-        int parent0 = edges[leaf0][0];
-
-        if (parent0 == parent1)
-        {
-            // swap leaf1 with a leaf which has a different parent than parent0, if possible
-            for (int leaf : leaves)
-            {
-                int parent = edges[leaf][0];
-                if (parent != parent0)
-                {
-                    int a = min(leaf, parent);
-                    int b = max(leaf, parent);
-                    int input_index = mp[make_pair(a, b)];
-                    int prev_value = ans[input_index];
-                    ans[input_index] = 1;
-                    ans[input_index1] = prev_value;
-                    break;
-                }
-            }
-        }
-    }
-
-    int ptr = 0;
-    for (int j = leaves.size(); j < n - 1; j++)
-    {
-        while (ans[ptr] != -1)
-        {
-            ptr++;
-        }
-        ans[ptr] = j;
-    }
-    debug(ans);
-
-    if (n == 2)
-    {
-        cout << "0\n";
-        return;
-    }
-
-    for (int i : ans)
-        cout << i << endl;
-    // cout << endl;
+    cout << -1 << " " << -1 << endl;
 }

@@ -14,17 +14,13 @@ using namespace std;
     ios_base::sync_with_stdio(false); \
     cin.tie(NULL);                    \
     cout.tie(NULL)
-#define MOD 1000000007
+#define MOD 1000000007ll
 #define MOD1 998244353
 #define INF 1e18
 #define endl "\n"
 #define int long long
-#define pb push_back
-#define ppb pop_back
 #define PI 3.141592653589793238462
 #define set_bits __builtin_popcountll
-#define sz(x) ((int)(x).size())
-#define all(x) (x).begin(), (x).end()
 
 using ll = long long;
 using ull = unsigned long long;
@@ -146,100 +142,94 @@ signed main()
     return 0;
 }
 
+vector<vector<int>> tree;
+map<pair<int, int>, int> edgeColor;
+vector<bool> alreadyReached;
+vector<int> nodeColor;
+int neighColorValue = 2;
+
+void dfs(int node, int colorValue)
+{
+    // debug(node);
+    // debug(colorValue);
+    // debug(node);
+    alreadyReached[node] = true;
+    nodeColor[node] = colorValue;
+    vector<int> neighbors = tree[node];
+    for (int neighNode : neighbors)
+    {
+        if (!alreadyReached[neighNode])
+        {
+            // check if the edge in between is black or not
+            if (edgeColor[make_pair(node, neighNode)] == 1)
+            {
+                neighColorValue++;
+                dfs(neighNode, neighColorValue);
+            }
+            else
+                dfs(neighNode, colorValue);
+        }
+    }
+    // debug("return");
+    return;
+}
+
 void suraj()
 {
-    int n;
-    cin >> n;
-
-    vector<vector<int>> edges(n);
-    map<pair<int, int>, int> mp; // for the output, cz the output is dependent on the input order :)
+    int n, k;
+    cin >> n >> k;
+    tree = vector<vector<int>>(n + 1, vector<int>());
+    edgeColor.clear();
+    alreadyReached = vector<bool>(n + 1, false);
+    nodeColor = vector<int>(n + 1, 0);
     for (int i = 1; i <= n - 1; i++)
     {
-        int a, b;
-        cin >> a >> b;
-        a--;
-        b--;
-        edges[a].push_back(b);
-        edges[b].push_back(a);
+        int u, v, col;
+        cin >> u >> v >> col;
 
-        if (a > b)
+        tree[u].push_back(v);
+        tree[v].push_back(u);
+        edgeColor[make_pair(u, v)] = col;
+        edgeColor[make_pair(v, u)] = col;
+    }
+    // debug(tree);
+    // debug(edgeColor);
+    // count all clumps of nodes divided by the black edges
+    // color each node wrt its cluster
+    dfs(1, 1);
+    // debug(alreadyReached);
+    debug(nodeColor);
+    map<int, int> mp;
+    for (int i = 1; i <= n; i++)
+        mp[nodeColor[i]]++;
+
+    // debug(mp);
+    vector<int> nodeCntOfEachColor;
+    for (auto el : mp)
+        nodeCntOfEachColor.push_back(el.second);
+
+    int cntAllSeq = 1;
+    for (int i = 1; i <= k; i++)
+    {
+        cntAllSeq *= n;
+        cntAllSeq %= MOD;
+    }
+
+    int cntBadSeq = 0;
+    for (int clusterSize : nodeCntOfEachColor)
+    {
+        int sum = 1;
+        for (int i = 1; i <= k; i++)
         {
-            swap(a, b);
+            sum *= clusterSize;
+            sum %= MOD;
         }
-        mp[make_pair(a, b)] = i - 1;
+        cntBadSeq += sum;
+        cntBadSeq = cntBadSeq % MOD;
     }
-    debug(mp);
-    vector<int> leaves;
-    for (int i = 0; i < n; i++)
-    {
-        if (edges[i].size() == 1)
-        {
-            leaves.push_back(i);
-        }
-    }
-    debug(leaves);
-    vector<int> ans(n - 1, -1);
-    for (int i = 0; i < leaves.size(); i++)
-    {
-        int leaf = leaves[i];
-        int parent = edges[leaf][0];
-        int a = min(leaf, parent);
-        int b = max(leaf, parent);
-        // debug(leaf);
-        // debug(parent);
-        int input_index = mp[make_pair(a, b)];
-        // debug(input_index);
-        ans[input_index] = i;
-    }
-    // edge case, dont put the edge 1 with edge 0, on two leaves with the same parent, if possible
-    if (leaves.size() >= 2)
-    {
-        int leaf1 = leaves[1];
-        int parent1 = edges[leaf1][0];
+    cntAllSeq += MOD;
+    cntAllSeq -= cntBadSeq;
+    cntAllSeq %= MOD;
 
-        int input_index1 = mp[make_pair(min(leaf1, parent1), max(leaf1, parent1))];
-
-        int leaf0 = leaves[0];
-        int parent0 = edges[leaf0][0];
-
-        if (parent0 == parent1)
-        {
-            // swap leaf1 with a leaf which has a different parent than parent0, if possible
-            for (int leaf : leaves)
-            {
-                int parent = edges[leaf][0];
-                if (parent != parent0)
-                {
-                    int a = min(leaf, parent);
-                    int b = max(leaf, parent);
-                    int input_index = mp[make_pair(a, b)];
-                    int prev_value = ans[input_index];
-                    ans[input_index] = 1;
-                    ans[input_index1] = prev_value;
-                    break;
-                }
-            }
-        }
-    }
-
-    int ptr = 0;
-    for (int j = leaves.size(); j < n - 1; j++)
-    {
-        while (ans[ptr] != -1)
-        {
-            ptr++;
-        }
-        ans[ptr] = j;
-    }
-    debug(ans);
-
-    if (n == 2)
-    {
-        cout << "0\n";
-        return;
-    }
-
-    for (int i : ans)
-        cout << i << endl;
-    // cout << endl;
+    cout << cntAllSeq << endl;
 }

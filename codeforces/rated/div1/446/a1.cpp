@@ -19,13 +19,8 @@ using namespace std;
 #define INF 1e18
 #define endl "\n"
 #define int long long
-#define pb push_back
-#define ppb pop_back
-#define mp make_pair
 #define PI 3.141592653589793238462
 #define set_bits __builtin_popcountll
-#define sz(x) ((int)(x).size())
-#define all(x) (x).begin(), (x).end()
 
 using ll = long long;
 using ull = unsigned long long;
@@ -128,7 +123,7 @@ signed main()
 
     int t = 1;
 
-    cin >> t;
+    // cin >> t;
 
     for (int i = 1; i <= t; i++)
     {
@@ -146,127 +141,76 @@ signed main()
 
     return 0;
 }
-vector<int> ps, a, b;
-pair<int, int> findEndIndex(int i, int volume)
+int n;
+vector<int> a;
+bool check(int len)
 {
-    // if (volume < b[i])
-    //     return make_pair(-1, volume);
-    debug(mp(i, volume));
-    int base = 0;
-    if (i > 0)
-        base = ps[i - 1];
-    int low = i, high = ps.size() - 1;
-    int ans = ps.size();
-    int mid = 0;
-    debug(base);
-    while (low < high)
+    debug(len);
+    for (int i = 0; i <= n - len; i++)
     {
-        mid = low + (high - low) / 2;
-        debug(low);
-        debug(mid);
-        debug(high);
-        debug(ps[mid] - base);
-        if (ps[mid] - base < volume)
+        int gcd = a[i];
+        for (int j = i; j < i + len; j++)
         {
-            debug("if");
-            low = mid + 1;
+            gcd = __gcd(gcd, a[j]);
         }
-        else if (ps[mid] - base > volume)
-        {
-            debug("else if");
-            high = mid;
-        }
-        else if (ps[mid] - base == volume)
-        {
-            debug("else");
-            break;
-        }
+        if (gcd == 1)
+            return true;
+        debug(gcd);
     }
-    mid = low + (high - low) / 2;
-    int rem = 0;
-    if (ps[mid] - base == volume)
-        ans = mid;
-    else if (ps[mid] - base > volume)
-    {
-        ans = max(0ll, mid - 1);
-        rem = volume - (ps[ans] - base);
-    }
-    else if (ps[mid] - base < volume)
-    {
-        ans = mid;
-        rem = volume - (ps[ans] - base);
-    }
-    // if (rem < 0)
-    // {
-    //     rem = 0;
-
-    // }
-    debug(ans);
-    debug(rem);
-    return make_pair(ans, rem);
+    return false;
 }
-// 1
-// 3
-// 10 20 15
-// 9 8 6
+
 void suraj()
 {
-    int n;
     cin >> n;
     a = vector<int>(n);
-    for (int i = 0; i < n; i++)
-        cin >> a[i];
-    b = vector<int>(n);
-    for (int i = 0; i < n; i++)
-        cin >> b[i];
+    for (int &i : a)
+        cin >> i;
 
-    ps = vector<int>(n);
-    ps[0] = b[0];
-    for (int i = 1; i < n; i++)
-        ps[i] = ps[i - 1] + b[i];
+    int left = 1, right = n;
 
-    vector<int> cnt(n);
-    vector<int> rem(n);
-
-    debug(ps);
-
-    for (int i = 0; i < n; i++)
+    if (!check(n))
     {
-        int volume = a[i];
-        if(a[i] <= b[i])
+        cout << -1 << endl;
+        return;
+    }
+    int mid = left + (right - left) / 2;
+
+    while (left < right)
+    {
+        mid = left + (right - left) / 2;
+        // debug(left);
+        // debug(mid);
+        // debug(right);
+        if (check(mid))
         {
-            rem[i] += volume;
-            continue;
+            // we need min no of oprations
+            right = mid;
         }
-        auto result = findEndIndex(i, volume);
-        debug(result);
-        // if(result.first == -1){
-        //     rem[i] += volume;
-        //     continue;
-        // }
-        cnt[i]++;
-        int endIndex = result.first;
-        int remVolume = result.second;
-        if (endIndex + 1 < n)
-            cnt[endIndex + 1]--;
-        if (endIndex + 1 < n)
-            rem[endIndex + 1] += remVolume;
-
-        debug(cnt);
-        debug(rem);
+        else
+        {
+            left = mid + 1;
+        }
     }
+    // we can be sure that left = right at this point :)
 
-    int carry = 0;
-    for (int i = 0; i < n; i++)
+    int cnt1 = 0;
+    for (int el : a)
     {
-        carry += cnt[i];
-        cnt[i] = carry;
+        if (el == 1)
+        {
+            cnt1++;
+        }
     }
-
-    debug(cnt);
-    debug(rem);
-
-    for (int i = 0; i < n; i++)
-        cout << b[i] * cnt[i] + rem[i] << " ";
-    cout << endl;
+    int firstOne = left - 1;
+    int cntOthers = n - cnt1;
+    // after creating the firstOne, from the len-length adjacent elements
+    if (left == 1)
+        ;
+    else
+        cntOthers--;
+    // if (cntOthers < 0)
+    //     cntOthers = 0;
+    // now in just one step we can convert each non1s to 1 :)
+    cout << firstOne + cntOthers << endl;
 }
